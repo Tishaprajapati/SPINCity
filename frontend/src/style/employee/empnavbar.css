@@ -1,0 +1,587 @@
+/* ── Variables ───────────────────────────────────────────────────────────────── */
+:root {
+  --emp-sidebar-width: 260px;
+  --emp-sidebar-collapsed: 72px;
+  --emp-topbar-height: 60px;
+
+  /* Station Employee Theme — deep navy + electric teal */
+  --emp-bg: #0f1623;
+  --emp-surface: #1a2333;
+  --emp-surface-hover: #212d40;
+  --emp-border: rgba(255, 255, 255, 0.06);
+  --emp-accent: #00d4aa;
+  --emp-accent-soft: rgba(0, 212, 170, 0.12);
+  --emp-accent-glow: rgba(0, 212, 170, 0.25);
+  --emp-text-primary: #f0f4f8;
+  --emp-text-secondary: #7a8fa6;
+  --emp-text-muted: #4a5a6e;
+
+  /* Maintenance accent — amber */
+  --emp-maintenance-accent: #f59e0b;
+  --emp-maintenance-soft: rgba(245, 158, 11, 0.12);
+  --emp-maintenance-glow: rgba(245, 158, 11, 0.25);
+
+  --emp-danger: #ef4444;
+  --emp-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: 'DM Sans', 'Sora', 'Segoe UI', sans-serif;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────────── */
+.emp-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: var(--emp-sidebar-width);
+  background: var(--emp-bg);
+  border-right: 1px solid var(--emp-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: width var(--emp-transition);
+  overflow: hidden;
+
+  /* Subtle texture */
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(0, 212, 170, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.04) 0%, transparent 50%);
+}
+
+.emp-sidebar.collapsed {
+  width: var(--emp-sidebar-collapsed);
+}
+
+/* ── Brand ───────────────────────────────────────────────────────────────────── */
+.emp-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--emp-border);
+  min-height: 68px;
+  position: relative;
+}
+
+.emp-brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--emp-accent), #00a882);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #0f1623;
+  box-shadow: 0 4px 12px var(--emp-accent-glow);
+}
+
+.emp-brand-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #0f1623;
+  stroke-width: 2.5;
+}
+
+.emp-brand-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.emp-brand-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--emp-text-primary);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.emp-brand-role {
+  font-size: 0.72rem;
+  color: var(--emp-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+.emp-toggle-btn {
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--emp-border);
+  background: var(--emp-surface);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--emp-text-secondary);
+  flex-shrink: 0;
+  transition: all var(--emp-transition);
+}
+
+.emp-toggle-btn:hover {
+  background: var(--emp-surface-hover);
+  color: var(--emp-text-primary);
+}
+
+.emp-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Profile Card ────────────────────────────────────────────────────────────── */
+.emp-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1rem;
+  margin: 0.75rem;
+  background: var(--emp-surface);
+  border-radius: 12px;
+  border: 1px solid var(--emp-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.emp-profile-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--emp-accent), transparent);
+  border-radius: 3px 0 0 3px;
+}
+
+.emp-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--emp-accent) 0%, #667eea 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.emp-avatar.small {
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+.emp-profile-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.emp-profile-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--emp-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emp-profile-sub {
+  font-size: 0.75rem;
+  color: var(--emp-text-secondary);
+  white-space: nowrap;
+}
+
+.emp-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.emp-status-dot.station {
+  background: var(--emp-accent);
+  box-shadow: 0 0 6px var(--emp-accent-glow);
+}
+
+.emp-status-dot.maintenance {
+  background: var(--emp-maintenance-accent);
+  box-shadow: 0 0 6px var(--emp-maintenance-glow);
+}
+
+/* ── Navigation ──────────────────────────────────────────────────────────────── */
+.emp-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.emp-nav::-webkit-scrollbar {
+  width: 3px;
+}
+
+.emp-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.emp-nav::-webkit-scrollbar-thumb {
+  background: var(--emp-border);
+  border-radius: 3px;
+}
+
+.emp-nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.emp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--emp-text-secondary);
+  cursor: pointer;
+  transition: all var(--emp-transition);
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative;
+}
+
+.emp-nav-item:hover {
+  background: var(--emp-surface-hover);
+  color: var(--emp-text-primary);
+}
+
+.emp-nav-item.active {
+  background: var(--emp-accent-soft);
+  color: var(--emp-accent);
+  font-weight: 600;
+}
+
+.emp-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  background: var(--emp-accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.emp-nav-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.emp-nav-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.emp-nav-label {
+  flex: 1;
+}
+
+.emp-badge {
+  background: var(--emp-danger);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+}
+
+.emp-arrow {
+  font-size: 1.1rem;
+  color: var(--emp-text-muted);
+  transition: transform var(--emp-transition);
+  display: inline-block;
+  line-height: 1;
+}
+
+.emp-arrow.open {
+  transform: rotate(90deg);
+}
+
+/* ── Submenu ─────────────────────────────────────────────────────────────────── */
+.emp-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-left: 0.75rem;
+}
+
+.emp-submenu.open {
+  max-height: 300px;
+}
+
+.emp-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--emp-text-muted);
+  cursor: pointer;
+  transition: all var(--emp-transition);
+  width: 100%;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 0.1rem 0;
+  position: relative;
+}
+
+.emp-sub-item::before {
+  content: '';
+  position: absolute;
+  left: -0.75rem;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  background: var(--emp-border);
+}
+
+.emp-sub-item:hover {
+  background: var(--emp-surface-hover);
+  color: var(--emp-text-primary);
+}
+
+.emp-sub-item.active {
+  color: var(--emp-accent);
+  background: var(--emp-accent-soft);
+  font-weight: 600;
+}
+
+.emp-sub-item .emp-nav-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+.emp-sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid var(--emp-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.emp-footer-info {
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  color: var(--emp-text-muted);
+}
+
+.emp-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.06);
+  color: #f87171;
+  cursor: pointer;
+  transition: all var(--emp-transition);
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.emp-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.emp-logout-btn .emp-nav-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Topbar (mobile) ─────────────────────────────────────────────────────────── */
+.emp-topbar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--emp-topbar-height);
+  background: var(--emp-bg);
+  border-bottom: 1px solid var(--emp-border);
+  z-index: 99;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+.emp-topbar-menu {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--emp-border);
+  background: var(--emp-surface);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--emp-text-secondary);
+  flex-shrink: 0;
+}
+
+.emp-topbar-menu svg {
+  width: 18px;
+  height: 18px;
+}
+
+.emp-topbar-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--emp-text-primary);
+  flex: 1;
+}
+
+.emp-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.emp-topbar-name {
+  font-size: 0.85rem;
+  color: var(--emp-text-secondary);
+}
+
+/* ── Main content offset ─────────────────────────────────────────────────────── */
+.emp-main-content {
+  margin-left: var(--emp-sidebar-width);
+  transition: margin-left var(--emp-transition);
+  min-height: 100vh;
+}
+
+.emp-sidebar.collapsed ~ .emp-main-content {
+  margin-left: var(--emp-sidebar-collapsed);
+}
+
+/* ── Collapsed state adjustments ────────────────────────────────────────────── */
+.emp-sidebar.collapsed .emp-nav-item {
+  justify-content: center;
+  padding: 0.7rem;
+}
+
+.emp-sidebar.collapsed .emp-logout-btn {
+  justify-content: center;
+  padding: 0.7rem;
+}
+
+/* ── Maintenance theme override ──────────────────────────────────────────────── */
+.emp-sidebar.maintenance-theme .emp-brand-icon {
+  background: linear-gradient(135deg, var(--emp-maintenance-accent), #d97706);
+  box-shadow: 0 4px 12px var(--emp-maintenance-glow);
+}
+
+.emp-sidebar.maintenance-theme .emp-brand-role {
+  color: var(--emp-maintenance-accent);
+}
+
+.emp-sidebar.maintenance-theme .emp-nav-item.active {
+  background: var(--emp-maintenance-soft);
+  color: var(--emp-maintenance-accent);
+}
+
+.emp-sidebar.maintenance-theme .emp-nav-item.active::before {
+  background: var(--emp-maintenance-accent);
+}
+
+.emp-sidebar.maintenance-theme .emp-sub-item.active {
+  color: var(--emp-maintenance-accent);
+  background: var(--emp-maintenance-soft);
+}
+
+.emp-sidebar.maintenance-theme .emp-profile-card::before {
+  background: linear-gradient(180deg, var(--emp-maintenance-accent), transparent);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .emp-sidebar {
+    transform: translateX(-100%);
+    width: var(--emp-sidebar-width) !important;
+  }
+
+  .emp-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .emp-topbar {
+    display: flex;
+  }
+
+  .emp-main-content {
+    margin-left: 0 !important;
+    padding-top: var(--emp-topbar-height);
+  }
+}
+
+/* ── Overlay (mobile) ────────────────────────────────────────────────────────── */
+.emp-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+@media (max-width: 768px) {
+  .emp-overlay.visible {
+    display: block;
+  }
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────────── */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.emp-nav-item,
+.emp-sub-item {
+  animation: slideIn 0.3s ease-out both;
+}

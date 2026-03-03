@@ -1,0 +1,993 @@
+/* Import Bootstrap */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  background: #fafafa;
+}
+
+/* Soft Color Variables - NO BLUE */
+:root {
+  --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --secondary-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  --accent-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  --success-color: #96ceb4;
+  --warning-color: #ffbe76;
+  --soft-pink: #f5576c;
+  --soft-peach: #fcb69f;
+  --soft-mint: #a8edea;
+  --soft-lavender: #d4a5a5;
+  --text-dark: #2c3e50;
+  --text-light: #6c757d;
+}
+
+/* Hero Section */
+.rent-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.rent-hero-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  animation: gentleZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes gentleZoom {
+  0% {
+    transform: scale(1);
+    filter: brightness(0.85);
+  }
+  100% {
+    transform: scale(1.08);
+    filter: brightness(1);
+  }
+}
+
+.rent-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.7) 0%, rgba(245, 87, 108, 0.6) 100%);
+  z-index: 1;
+}
+
+.rent-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.rent-hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 1rem;
+  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 1s ease;
+}
+
+.rent-hero-subtitle {
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.95);
+  animation: fadeInUp 1s ease 0.2s backwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Destination Section */
+.destination-section {
+  padding: 80px 0;
+  background: white;
+}
+
+.destination-card {
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 3px solid transparent;
+  height: 100%;
+}
+
+.destination-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(245, 87, 108, 0.25);
+}
+
+.destination-card.selected {
+  border-color: var(--soft-pink);
+  box-shadow: 0 20px 60px rgba(245, 87, 108, 0.3);
+  transform: translateY(-10px);
+}
+
+.destination-image-container {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.destination-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.destination-card:hover .destination-image {
+  transform: scale(1.1);
+}
+
+.destination-rating {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.destination-selected-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--success-color);
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  animation: bounceIn 0.5s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.destination-info {
+  padding: 2rem;
+}
+
+.destination-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.destination-state {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--soft-pink);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.destination-description {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.destination-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.detail-icon {
+  font-size: 1.3rem;
+}
+
+.destination-highlights {
+  padding-top: 1rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.destination-highlights strong {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.highlights-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.highlight-tag {
+  background: linear-gradient(135deg, #fed6e3 0%, #ffecd2 100%);
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Bike Section Updates */
+.bike-selection-section,
+.booking-form-section,
+.why-choose-section {
+  padding: 80px 0;
+}
+
+.bike-selection-section {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 20%, #ffecd2 100%);
+}
+
+.booking-form-section {
+  background: white;
+}
+
+.why-choose-section {
+  background: linear-gradient(135deg, #fed6e3 0%, #ffecd2 100%);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.rent-section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.rent-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--primary-gradient);
+  border-radius: 2px;
+}
+
+.rent-section-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-light);
+}
+
+/* Bike Cards */
+.rent-bike-card {
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 3px solid transparent;
+}
+
+.rent-bike-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(245, 87, 108, 0.25);
+}
+
+.rent-bike-card.selected {
+  border-color: var(--soft-pink);
+  box-shadow: 0 20px 60px rgba(245, 87, 108, 0.3);
+  transform: translateY(-10px);
+}
+
+.rent-bike-image-container {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.rent-bike-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.rent-bike-card:hover .rent-bike-image {
+  transform: scale(1.1);
+}
+
+.rent-bike-type {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 600;
+  color: var(--soft-pink);
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.selected-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--success-color);
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  animation: bounceIn 0.5s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.rent-bike-info {
+  padding: 2rem;
+}
+
+.rent-bike-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+.rent-bike-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bike-terrain-tag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--soft-lavender);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Location Select */
+.location-select {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  cursor: pointer;
+}
+
+.location-select:focus {
+  outline: none;
+  border-color: var(--soft-peach);
+  box-shadow: 0 0 0 4px rgba(252, 182, 159, 0.1);
+}
+
+/* Duration Button Updates */
+.duration-btn small {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* Addon Grid Updates */
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.addon-icon-large {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.addon-item {
+  flex-direction: column;
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.addon-info {
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Destination Info Box */
+.destination-info-box {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 20px;
+  border-left: 5px solid var(--soft-mint);
+}
+
+.destination-info-box h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.destination-info-box p {
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.spots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.spot-tag {
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.terrain-info {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.terrain-info strong {
+  margin: 0 0.5rem;
+}
+
+/* Summary Updates */
+.summary-destination {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
+}
+
+.summary-dest-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.summary-destination h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.summary-rating {
+  font-size: 0.85rem;
+}
+
+.summary-location-info {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.location-pin {
+  font-size: 1.5rem;
+}
+
+.rent-bike-pricing {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.price-option {
+  text-align: center;
+}
+
+.price-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 0.3rem;
+}
+
+.price-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Booking Card */
+.booking-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 25px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+}
+
+.booking-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+}
+
+/* Duration Selector */
+.duration-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.duration-btn {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 15px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.duration-btn:hover {
+  border-color: var(--soft-peach);
+  transform: translateY(-3px);
+}
+
+.duration-btn.active {
+  background: var(--secondary-gradient);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 8px 20px rgba(252, 182, 159, 0.4);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--soft-peach);
+  box-shadow: 0 0 0 4px rgba(252, 182, 159, 0.1);
+}
+
+/* Add-ons Section */
+.addons-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.addons-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+}
+
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.addon-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addon-item:hover {
+  background: #fff;
+  border-color: var(--soft-peach);
+  transform: translateX(5px);
+}
+
+.addon-item.selected {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  border-color: var(--soft-peach);
+  box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+}
+
+.addon-check {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.addon-item.selected .addon-check {
+  background: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.addon-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.addon-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.addon-price {
+  font-weight: 700;
+  color: var(--soft-pink);
+}
+
+/* Summary Card */
+.summary-card {
+  background: linear-gradient(135deg, #fed6e3 0%, #ffecd2 100%);
+  padding: 2.5rem;
+  border-radius: 25px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 100px;
+}
+
+.summary-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+}
+
+.summary-bike {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+}
+
+.summary-bike-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.summary-bike h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.3rem;
+}
+
+.summary-bike-type {
+  font-size: 0.85rem;
+  color: var(--soft-pink);
+  font-weight: 600;
+}
+
+.summary-details {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  color: var(--text-dark);
+}
+
+.summary-value {
+  font-weight: 600;
+}
+
+.summary-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--soft-peach), transparent);
+  margin: 1rem 0;
+}
+
+.summary-total {
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding-top: 1rem;
+}
+
+.total-price {
+  font-size: 2rem;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-book {
+  width: 100%;
+  padding: 1.2rem 2rem;
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+  margin-bottom: 2rem;
+}
+
+.btn-book:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(245, 87, 108, 0.5);
+}
+
+.btn-icon {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-book:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.no-selection {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.no-selection-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.no-selection p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.trust-badges {
+  display: flex;
+  justify-content: space-around;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 15px;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.badge-item span:first-child {
+  font-size: 1.5rem;
+}
+
+/* Benefits Section */
+.benefit-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  height: 100%;
+}
+
+.benefit-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 50px rgba(245, 87, 108, 0.15);
+}
+
+.benefit-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.benefit-card h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.benefit-card p {
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+.feature-tag {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .rent-hero-title {
+    font-size: 3rem;
+  }
+
+  .rent-section-title {
+    font-size: 2.5rem;
+  }
+
+  .addons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .rent-hero-title {
+    font-size: 2.2rem;
+  }
+
+  .duration-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .rent-bike-pricing {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .addons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-card {
+    padding: 2rem;
+  }
+
+  .summary-card {
+    padding: 2rem;
+  }
+
+  .destination-card {
+    margin-bottom: 2rem;
+  }
+}

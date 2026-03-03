@@ -1,0 +1,211 @@
+/* ============================================================
+   RideStatusBar.css — Draggable Floating Ride Status Widget
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;500;700&display=swap');
+
+.ride-bar {
+  position: fixed;
+  width: 280px;
+  background: linear-gradient(145deg, #0d1b2a, #0a1628);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0, 230, 255, 0.15);
+  z-index: 99999;
+  cursor: grab;
+  user-select: none;
+  font-family: 'Exo 2', sans-serif;
+  transition: box-shadow 0.2s ease;
+  animation: barSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.ride-bar:active { cursor: grabbing; }
+
+.ride-bar.green { border-top: 3px solid #00c97a; }
+.ride-bar.orange { border-top: 3px solid #ff9f1c; }
+.ride-bar.red {
+  border-top: 3px solid #ff3b5c;
+  animation: barSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+             urgentGlow 1s ease-in-out infinite;
+}
+
+@keyframes barSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes urgentGlow {
+  0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,59,92,0.3); }
+  50%       { box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 3px rgba(255,59,92,0.6), 0 0 20px rgba(255,59,92,0.2); }
+}
+
+/* ── Handle row ── */
+.ride-bar-handle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.handle-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  grid-template-rows: repeat(2, 5px);
+  gap: 3px;
+  opacity: 0.35;
+}
+
+.handle-dots span {
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.ride-bar-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #00e678;
+}
+
+.ride-bar-dot {
+  width: 7px;
+  height: 7px;
+  background: #00e678;
+  border-radius: 50%;
+  animation: dotBlink 1.2s ease-in-out infinite;
+}
+
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.3; transform: scale(0.6); }
+}
+
+.ride-bar-toggle {
+  background: rgba(255,255,255,0.07);
+  border: none;
+  color: rgba(255,255,255,0.5);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ride-bar-toggle:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+/* ── Minimized state ── */
+.ride-bar.minimized {
+  width: 180px;
+}
+
+/* ── Body ── */
+.ride-bar-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Timer ── */
+.ride-bar-timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ride-bar-timer-label {
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+}
+
+.ride-bar-timer-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  transition: color 0.4s;
+}
+
+.ride-bar-timer-value.green  { color: #00c97a; }
+.ride-bar-timer-value.orange { color: #ff9f1c; }
+.ride-bar-timer-value.red    { color: #ff3b5c; animation: urgentPulse 0.7s ease-in-out infinite; }
+
+@keyframes urgentPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Divider ── */
+.ride-bar-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 1px;
+}
+
+/* ── Info rows ── */
+.ride-bar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ride-bar-info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rbi-icon { font-size: 0.85rem; }
+
+.rbi-text {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Warning / Expired ── */
+.ride-bar-warn {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ff9f1c;
+  background: rgba(255,159,28,0.1);
+  border: 1px solid rgba(255,159,28,0.3);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  animation: warnPulse 1.5s ease-in-out infinite;
+}
+
+.ride-bar-expired {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ff3b5c;
+  background: rgba(255,59,92,0.1);
+  border: 1px solid rgba(255,59,92,0.3);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+@keyframes warnPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}

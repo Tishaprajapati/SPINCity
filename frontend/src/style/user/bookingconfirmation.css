@@ -1,0 +1,1503 @@
+
+/* Booking Confirmation Page */
+.booking-confirmation-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a0aeed 30%, #667eea 140%);
+  padding: 80px 20px 40px;
+}
+
+.booking-container {
+  max-width: 1400px;
+
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 30px;
+  margin-top: 60px;
+}
+
+/* Left Section */
+.booking-left {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 30px;
+}
+
+.section-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 30px 0 20px;
+}
+
+/* Duration Selector */
+.duration-selector {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.duration-btn {
+  flex: 1;
+  padding: 15px;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.duration-btn:hover {
+  border-color: #667eea;
+  background: #eef2ff;
+}
+
+.duration-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ========================================
+   STATION SELECTOR - NEW STYLING
+   ======================================== */
+
+.station-selector-wrapper {
+  margin-bottom: 3rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.station-selector-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.station-selector-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.station-select {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: var(--text-dark);
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5576c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+.station-select:hover {
+  border-color: var(--soft-peach);
+  box-shadow: 0 4px 15px rgba(252, 182, 159, 0.2);
+}
+
+.station-select:focus {
+  outline: none;
+  border-color: var(--soft-pink);
+  box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.1);
+}
+
+.station-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Add-ons Grid */
+.addons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.addon-card {
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.addon-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+}
+
+.addon-card input[type="checkbox"] {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.addon-card label {
+  cursor: pointer;
+  display: block;
+}
+
+.addon-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.addon-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f56565;
+}
+
+.addon-card input[type="checkbox"]:checked ~ label {
+  color: #667eea;
+}
+
+/* Payment Methods */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.payment-option {
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+  border-color: #667eea;
+  background: #eef2ff;
+}
+
+.payment-option.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+.payment-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+}
+
+.payment-option span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+/* Terms Checkbox */
+.terms-checkbox {
+  margin-top: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.terms-checkbox label {
+  font-size: 14px;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.terms-checkbox a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.terms-checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* Right Section - Booking Summary */
+/* Membership Active Badge */
+.membership-active-badge {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.badge-icon {
+  font-size: 2rem;
+}
+
+.badge-content strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.badge-content p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.95;
+}
+
+/* Discount Row */
+.summary-row.discount-row {
+  background: #f0fdf4;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+}
+
+.discount-amount {
+  color: #10b981 !important;
+  font-weight: 700;
+}
+
+/* Free Minutes Banner */
+.free-minutes-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-left: 4px solid #f59e0b;
+  font-weight: 600;
+}
+
+.free-icon {
+  font-size: 1.5rem;
+}
+
+.free-text {
+  font-size: 0.95rem;
+}
+
+.booking-right {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.booking-summary {
+  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.summary-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 25px;
+}
+
+/* Selected Bike */
+.selected-bike {
+  display: flex;
+  gap: 15px;
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.selected-bike img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.bike-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 5px;
+}
+
+.bike-type {
+  font-size: 14px;
+  color: #f56565;
+  font-weight: 600;
+}
+
+/* Summary Details */
+.summary-details {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 15px;
+  color: #4a5568;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row strong {
+  color: #2d3748;
+  font-weight: 700;
+}
+
+/* Total Amount */
+.total-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.amount {
+  font-size: 28px;
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Confirm Button */
+.confirm-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+  margin-bottom: 20px;
+}
+
+.confirm-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+}
+
+/* Benefits */
+.benefits {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+}
+
+.benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.benefit-item .icon {
+  font-size: 24px;
+}
+
+/* Modal Link */
+.modal-link {
+  color: #6c63ff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.modal-link:hover {
+  color: #5a52d5;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  margin-top: 110px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Card */
+.modal-card {
+  background: white;
+  border-radius: 20px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 2rem;
+  max-height: calc(80vh - 80px);
+  overflow-y: auto;
+  line-height: 1.7;
+}
+
+.modal-content h3 {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-content h3:first-child {
+  margin-top: 0;
+}
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.modal-content strong {
+  color: #6c63ff;
+  font-weight: 600;
+}
+
+/* Scrollbar styling */
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #6c63ff;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #5a52d5;
+}
+
+
+/* ============================================
+   CYCLE RENTAL PAYMENT MODAL - KINETIC THEME
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;500;700&display=swap');
+
+/* ── Overlay ── */
+.payment-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #0a0f1ecc 0%, #000005ee 100%);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: overlayIn 0.4s ease forwards;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal Card ── */
+.payment-modal {
+  position: relative;
+  background: linear-gradient(145deg, #0d1b2a, #0a1628, #111827);
+  border: 1.5px solid rgba(0, 230, 255, 0.3);
+  border-radius: 24px;
+  padding: 44px 36px 36px;
+  width: 360px;
+  max-width: 94vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  font-family: 'Exo 2', sans-serif;
+  box-shadow:
+    0 0 40px rgba(0, 230, 255, 0.12),
+    0 0 100px rgba(0, 180, 255, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.8) translateY(30px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Background wheel rings (decorative) ── */
+.payment-modal::before,
+.payment-modal::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid;
+  pointer-events: none;
+}
+
+/* Large back wheel — bottom-left */
+.payment-modal::before {
+  width: 220px;
+  height: 220px;
+  bottom: -80px;
+  left: -80px;
+  border-color: rgba(0, 230, 255, 0.08);
+  box-shadow: 0 0 30px rgba(0,230,255,0.04);
+  animation: spinWheel 12s linear infinite;
+}
+
+/* Small front wheel — top-right */
+.payment-modal::after {
+  width: 130px;
+  height: 130px;
+  top: -45px;
+  right: -45px;
+  border-color: rgba(100, 220, 255, 0.1);
+  animation: spinWheel 8s linear infinite reverse;
+}
+
+@keyframes spinWheel {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Extra decorative spoke rings ── */
+.payment-modal .wheel-spoke-1,
+.payment-modal .wheel-spoke-2 {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed;
+  pointer-events: none;
+  animation: spinWheel 20s linear infinite;
+}
+
+/* If you want to add spoke divs, here's the CSS ready */
+/* Otherwise, we'll fake them using pseudo-elements on the h3 */
+
+/* ── Heading ── */
+.payment-modal h3 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+  position: relative;
+  animation: slideDown 0.6s ease 0.2s both;
+}
+
+.payment-modal h3::after {
+  content: '';
+  display: block;
+  height: 3px;
+  width: 60%;
+  margin: 8px auto 0;
+  background: linear-gradient(90deg, transparent, #00e6ff, #00b4ff, transparent);
+  border-radius: 2px;
+  animation: shimmerLine 2s ease-in-out infinite;
+}
+
+@keyframes shimmerLine {
+  0%, 100% { opacity: 0.6; transform: scaleX(0.6); }
+  50%       { opacity: 1;   transform: scaleX(1);   }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Wind streak lines ── */
+.payment-modal .wind-streaks {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Auto-generated with nth-child if you add 5 .streak divs inside .wind-streaks */
+.payment-modal .streak {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,230,255,0.3), transparent);
+  border-radius: 1px;
+  animation: streakMove 3s ease-in-out infinite;
+}
+.payment-modal .streak:nth-child(1) { width: 80px;  top: 20%; left: -100px; animation-delay: 0s;    animation-duration: 2.5s; }
+.payment-modal .streak:nth-child(2) { width: 120px; top: 35%; left: -150px; animation-delay: 0.4s;  animation-duration: 3s;   }
+.payment-modal .streak:nth-child(3) { width: 60px;  top: 50%; left: -80px;  animation-delay: 0.8s;  animation-duration: 2s;   }
+.payment-modal .streak:nth-child(4) { width: 100px; top: 65%; left: -130px; animation-delay: 1.2s;  animation-duration: 3.5s; }
+.payment-modal .streak:nth-child(5) { width: 70px;  top: 80%; left: -90px;  animation-delay: 0.2s;  animation-duration: 2.8s; }
+
+@keyframes streakMove {
+  0%   { transform: translateX(0);    opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateX(550px); opacity: 0; }
+}
+
+/* ── QR Image Container ── */
+.payment-qr-image {
+  width: 190px;
+  height: 190px;
+  border-radius: 16px;
+  object-fit: cover;
+  position: relative;
+  animation: qrFloat 3s ease-in-out infinite, qrIn 0.7s ease 0.3s both;
+  box-shadow:
+    0 0 0 2px rgba(0,230,255,0.5),
+    0 0 20px rgba(0,230,255,0.3),
+    0 0 50px rgba(0,180,255,0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.payment-qr-image:hover {
+  box-shadow:
+    0 0 0 3px rgba(0,255,200,0.8),
+    0 0 40px rgba(0,255,200,0.5),
+    0 0 80px rgba(0,200,255,0.3);
+  transform: scale(1.04) translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+@keyframes qrFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+@keyframes qrIn {
+  from { opacity: 0; transform: scale(0.7) rotate(-5deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* ── Pulsing ring around QR ── */
+.payment-qr-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-qr-wrapper::before,
+.payment-qr-wrapper::after {
+  content: '';
+  position: absolute;
+  border-radius: 20px;
+  border: 2px solid rgba(0, 230, 255, 0.4);
+  animation: ringPulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+.payment-qr-wrapper::after {
+  animation-delay: 1s;
+  border-color: rgba(0, 180, 255, 0.25);
+}
+
+@keyframes ringPulse {
+  0%   { inset: -4px;  opacity: 1; }
+  100% { inset: -22px; opacity: 0; }
+}
+
+/* ── Amount Text ── */
+.payment-modal p {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 1px;
+  color: #fff;
+  margin: 0;
+  background: linear-gradient(90deg, #00e6ff, #fff, #00b4ff);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmer 3s linear infinite, slideUp 0.6s ease 0.4s both;
+}
+
+@keyframes textShimmer {
+  to { background-position: 200% center; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Pay Button (not close) — if you add one later ── */
+.pay-now-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 30px rgba(0,114,255,0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pay-now-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: rgba(255,255,255,0.25);
+  transform: skewX(-20deg);
+  animation: btnSheen 2.5s ease infinite;
+}
+
+.pay-now-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,114,255,0.7);
+}
+
+@keyframes btnSheen {
+  0%   { left: -75%; }
+  60%  { left: 125%; }
+  100% { left: 125%; }
+}
+
+/* ── Close Button ── */
+.close-payment-btn {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5);
+  padding: 10px 28px;
+  border-radius: 50px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: slideUp 0.6s ease 0.55s both;
+}
+
+.close-payment-btn:hover {
+  border-color: rgba(255,100,100,0.5);
+  color: rgba(255,120,120,0.9);
+  background: rgba(255,60,60,0.07);
+  transform: scale(1.05);
+}
+
+/* ── Particle dots (speed particles — add 8 .particle divs) ── */
+.payment-modal .particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(0, 230, 255, 0.8);
+  border-radius: 50%;
+  animation: floatParticle linear infinite;
+  pointer-events: none;
+}
+
+.payment-modal .particle:nth-child(1) { left: 10%; animation-duration: 4s;   animation-delay: 0s;   top: 90%; }
+.payment-modal .particle:nth-child(2) { left: 25%; animation-duration: 5s;   animation-delay: 1s;   top: 95%; }
+.payment-modal .particle:nth-child(3) { left: 40%; animation-duration: 3.5s; animation-delay: 0.5s; top: 92%; }
+.payment-modal .particle:nth-child(4) { left: 55%; animation-duration: 4.5s; animation-delay: 2s;   top: 88%; }
+.payment-modal .particle:nth-child(5) { left: 70%; animation-duration: 3s;   animation-delay: 0.2s; top: 94%; }
+.payment-modal .particle:nth-child(6) { left: 85%; animation-duration: 5.5s; animation-delay: 1.5s; top: 91%; }
+.payment-modal .particle:nth-child(7) { left: 15%; animation-duration: 4.2s; animation-delay: 3s;   top: 89%; width: 2px; height: 2px; }
+.payment-modal .particle:nth-child(8) { left: 60%; animation-duration: 3.8s; animation-delay: 0.7s; top: 93%; width: 4px; height: 4px; background: rgba(0,180,255,0.6); }
+
+@keyframes floatParticle {
+  0%   { transform: translateY(0)    scale(1);   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.8; }
+  100% { transform: translateY(-380px) scale(0); opacity: 0; }
+}
+
+/* ── Corner speed-lines (top-right accent) ── */
+.payment-modal .speed-corner {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0.4;
+}
+
+.payment-modal .speed-corner span {
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00e6ff);
+  border-radius: 1px;
+  animation: speedGrow 1.8s ease-in-out infinite;
+}
+
+.payment-modal .speed-corner span:nth-child(1) { width: 30px; animation-delay: 0s; }
+.payment-modal .speed-corner span:nth-child(2) { width: 20px; animation-delay: 0.2s; }
+.payment-modal .speed-corner span:nth-child(3) { width: 12px; animation-delay: 0.4s; }
+
+@keyframes speedGrow {
+  0%, 100% { transform: scaleX(0.4); opacity: 0.4; }
+  50%       { transform: scaleX(1);   opacity: 1;   }
+}
+
+/* ── Scan hint text ── */
+.payment-modal .scan-hint {
+  font-size: 0.75rem;
+  color: rgba(0, 230, 255, 0.6);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+
+/* ============================================================
+   ADD THIS TO: bookingconfirmation.css
+   RIDE STATUS & TIMER PANEL
+   ============================================================ */
+
+/* ── Panel wrapper ── */
+.ride-status-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 10px 0 20px;
+  animation: rideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes rideIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Header ── */
+.ride-status-header {
+  text-align: center;
+}
+
+.ride-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 230, 120, 0.12);
+  border: 1px solid rgba(0, 230, 120, 0.4);
+  color: #00e678;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 5px 14px;
+  border-radius: 50px;
+  margin-bottom: 12px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 230, 120, 0.3); }
+  50%       { box-shadow: 0 0 0 8px rgba(0, 230, 120, 0); }
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: #00e678;
+  border-radius: 50%;
+  animation: dotBlink 1.2s ease-in-out infinite;
+}
+
+@keyframes dotBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+.ride-status-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 6px;
+}
+
+.ride-status-sub {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ── Timer Ring ── */
+.timer-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.timer-ring-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.timer-ring-svg {
+  width: 200px;
+  height: 200px;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 12px rgba(0, 180, 255, 0.25));
+}
+
+.timer-ring-track {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.06);
+  stroke-width: 10;
+}
+
+.timer-ring-progress {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+}
+
+.timer-ring-progress.green  { stroke: #00c97a; filter: drop-shadow(0 0 6px #00c97a88); }
+.timer-ring-progress.orange { stroke: #ff9f1c; filter: drop-shadow(0 0 6px #ff9f1c88); }
+.timer-ring-progress.red    { stroke: #ff3b5c; filter: drop-shadow(0 0 6px #ff3b5c88); animation: urgentPulse 0.6s ease-in-out infinite; }
+
+@keyframes urgentPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.timer-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.timer-label {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+.timer-digits {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1;
+  transition: color 0.5s ease;
+}
+
+.timer-digits.green  { color: #00c97a; }
+.timer-digits.orange { color: #ff9f1c; }
+.timer-digits.red    { color: #ff3b5c; animation: urgentPulse 0.6s ease-in-out infinite; }
+
+.timer-sublabel {
+  font-size: 0.7rem;
+  color: #999;
+  letter-spacing: 1px;
+}
+
+/* ── Stats Grid ── */
+.ride-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.ride-stat-card {
+  background: linear-gradient(135deg, #f8faff, #f0f4ff);
+  border: 1px solid rgba(0, 100, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ride-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 100, 255, 0.1);
+}
+
+.stat-icon { font-size: 1.2rem; }
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #999;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Road Animation ── */
+.road-animation {
+  width: 100%;
+  height: 70px;
+  background: linear-gradient(180deg, #e8eaf0 0%, #d1d5e0 100%);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Road center dashes */
+.road-lines {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 200%;
+  height: 4px;
+  margin-top: -2px;
+  display: flex;
+  gap: 20px;
+  animation: roadMove 1.2s linear infinite;
+}
+
+.road-line {
+  flex-shrink: 0;
+  width: 40px;
+  height: 4px;
+  background: #fff;
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+@keyframes roadMove {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-120px); }
+}
+
+/* Wheels */
+.rider-wheel {
+  position: absolute;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 4px solid #444;
+  background: #f0f0f0;
+  animation: wheelSpin 0.6s linear infinite;
+}
+
+.rider-wheel::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.rider-wheel-back  { left: 60px; }
+.rider-wheel-front { left: 130px; }
+
+@keyframes wheelSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Rider body (simple silhouette) */
+.rider-body {
+  position: absolute;
+  bottom: 28px;
+  left: 80px;
+  width: 66px;
+  height: 28px;
+  background: linear-gradient(135deg, #3a3a5c, #22223b);
+  border-radius: 12px 12px 4px 4px;
+  clip-path: polygon(10% 100%, 0% 30%, 30% 0%, 70% 0%, 100% 30%, 90% 100%);
+}
+
+/* ── Warning Banners ── */
+.ride-warning-banner {
+  width: 100%;
+  background: linear-gradient(135deg, #fff3cd, #ffe8a1);
+  border: 1px solid #ffc107;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #856404;
+  text-align: center;
+  animation: warningSlide 0.4s ease both, warningPulse 2s ease-in-out infinite;
+}
+
+.ride-expired-banner {
+  width: 100%;
+  background: linear-gradient(135deg, #ffe0e6, #ffc5d0);
+  border: 1px solid #ff3b5c;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #c0002a;
+  text-align: center;
+  animation: warningSlide 0.4s ease both;
+}
+
+@keyframes warningSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes warningPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+}
+
+
+.end-ride-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff3b5c, #c0002a);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(255, 59, 92, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.end-ride-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 32px rgba(255, 59, 92, 0.6);
+}
+
+
+.station-distance-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f0f7ff, #e8f4ff);
+  border: 1px solid rgba(0, 100, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 10px;
+  animation: slideDown 0.3s ease both;
+}
+
+.distance-icon { font-size: 1.4rem; }
+
+.distance-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.distance-info strong {
+  font-size: 0.95rem;
+  color: #1a1a2e;
+  font-weight: 700;
+}
+
+.distance-info span {
+  font-size: 0.82rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.distance-info small {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+
+.deposit-checkbox {
+  margin-top: 10px;
+  background: #fff8f0;
+  border: 1.5px solid #f4a261;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.deposit-info-card {
+  background: linear-gradient(135deg, #fff8f0, #fff3e0);
+  border: 1.5px solid #f4a261;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+
+.deposit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a2e;
+}
+
+.deposit-amount {
+  color: #e63946;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.deposit-note {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 6px 0 0;
+}
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .booking-container {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-right {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-confirmation-page {
+    padding: 60px 15px 30px;
+  }
+
+  .booking-left {
+    padding: 25px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .duration-selector {
+    flex-direction: column;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .addons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-summary {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 22px;
+  }
+
+  .confirm-btn {
+    padding: 15px;
+    font-size: 16px;
+  }
+}
