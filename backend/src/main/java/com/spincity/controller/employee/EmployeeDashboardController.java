@@ -4,10 +4,12 @@ import com.spincity.dto.employee.ApprovalRequestDTO;
 import com.spincity.dto.employee.CustomerDetailDTO;
 import com.spincity.dto.employee.EmployeeDashboardDTO;
 import com.spincity.dto.employee.RiderListDTO;
+import com.spincity.repository.RentalTransactionRepository;
 import com.spincity.service.employee.EmployeeDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.spincity.dto.employee.ActiveRideDTO;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/employee")
 @RequiredArgsConstructor
 public class EmployeeDashboardController {
-
+    private final RentalTransactionRepository rentalTransactionRepository;
     private final EmployeeDashboardService employeeDashboardService;
 
     // Dashboard summary
@@ -46,6 +48,14 @@ public class EmployeeDashboardController {
         return ResponseEntity.ok(employeeDashboardService.getTodaysRiders(stationId));
     }
 
+    @PutMapping("/payment-status/{transactionId}")
+    public ResponseEntity<String> updatePaymentStatus(
+            @PathVariable Long transactionId,
+            @RequestParam String status) {
+        employeeDashboardService.updatePaymentStatus(transactionId, status);
+        return ResponseEntity.ok("Payment status updated to " + status);
+    }
+
     // Customer details
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<CustomerDetailDTO> getCustomerDetails(@PathVariable Integer customerId) {
@@ -65,5 +75,30 @@ public class EmployeeDashboardController {
     public ResponseEntity<String> returnDeposit(@PathVariable Long transactionId) {
         employeeDashboardService.returnDeposit(transactionId);
         return ResponseEntity.ok("Deposit returned successfully");
+    }
+
+    @GetMapping("/ride-status/{transactionId}")
+    public ResponseEntity<String> getRideStatus(@PathVariable Long transactionId) {
+        return ResponseEntity.ok(employeeDashboardService.getRideStatus(transactionId));
+    }
+
+    @GetMapping("/active-rides/{stationId}")
+    public ResponseEntity<List<ActiveRideDTO>> getActiveRides(@PathVariable Integer stationId) {
+        return ResponseEntity.ok(employeeDashboardService.getActiveRides(stationId));
+    }
+
+    @PutMapping("/complete-ride/{transactionId}")
+    public ResponseEntity<String> completeRide(
+            @PathVariable Long transactionId,
+            @RequestParam Integer empId) {
+        employeeDashboardService.completeRide(transactionId, empId);
+        return ResponseEntity.ok("Ride completed");
+    }
+
+
+    @GetMapping("/approval-status/{transactionId}")
+    public ResponseEntity<String> getApprovalStatus(@PathVariable Long transactionId) {
+        String status = rentalTransactionRepository.findApprovalStatusById(transactionId);
+        return ResponseEntity.ok(status);
     }
 }

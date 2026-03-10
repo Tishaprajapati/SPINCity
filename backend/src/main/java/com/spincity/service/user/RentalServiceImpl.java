@@ -44,7 +44,7 @@ public class RentalServiceImpl implements RentalService {
                 .findActiveRentalByCustomerId(customerId);
 
         if (activeRental == null) {
-            return null; // No active rental
+            return null;
         }
 
         ActiveRentalDTO dto = new ActiveRentalDTO();
@@ -54,21 +54,18 @@ public class RentalServiceImpl implements RentalService {
         dto.setStartTime(activeRental.getRentalStartTime()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a")));
         dto.setStation(activeRental.getPickupStation().getStationName());
-        dto.setStation(activeRental.getPickupStation().getStationName());
-
-// ✅ ADD THESE TWO LINES RIGHT HERE
         dto.setPickupStationId(activeRental.getPickupStation().getStationId());
         dto.setReturnStationId(
                 activeRental.getReturnStation() != null
                         ? activeRental.getReturnStation().getStationId()
                         : null
         );
-        // Calculate duration
+
         Duration duration = Duration.between(activeRental.getRentalStartTime(), LocalDateTime.now());
         long hours = duration.toHours();
         long minutes = duration.toMinutes() % 60;
         dto.setDuration(hours + "h " + minutes + "m");
-        // Add after dto.setDuration(...)
+
         dto.setExpectedEndTime(
                 activeRental.getRentalEndTime() != null
                         ? activeRental.getRentalEndTime()
@@ -78,7 +75,8 @@ public class RentalServiceImpl implements RentalService {
         dto.setDepositStatus(activeRental.getDepositStatus() != null
                 ? activeRental.getDepositStatus()
                 : "NOT_PAID");
-        dto.setCurrentCharges(activeRental.getTotalAmount() != null ? activeRental.getTotalAmount() : 0.0);
+        dto.setCurrentCharges(activeRental.getTotalAmount() != null
+                ? activeRental.getTotalAmount() : 0.0);
 
         return dto;
     }
@@ -95,7 +93,9 @@ public class RentalServiceImpl implements RentalService {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // Check if customer already has an active rental
+        // ── Check for existing ACTIVE (approved) rental only ──────────────────
+        // We use the query that only returns rentalStatus = Active AND approvalStatus = Approved
+        // so a pending/rejected cash booking does NOT block a new booking.
         RentalTransaction existingActiveRental = rentalTransactionRepository
                 .findActiveRentalByCustomerId(request.getCustomerId());
         if (existingActiveRental != null) {
@@ -110,32 +110,36 @@ public class RentalServiceImpl implements RentalService {
             throw new RuntimeException("Cycle is not available for rent");
         }
 
-        // Validate station
+        // Validate pickup station
         Station pickupStation = stationRepository.findById(request.getPickupStationId().longValue())
                 .orElseThrow(() -> new RuntimeException("Station not found"));
 
-        // Create rental transaction
+        // ── Create rental transaction ─────────────────────────────────────────
         RentalTransaction rental = new RentalTransaction();
         rental.setCustomer(customer);
         rental.setCycle(cycle);
         rental.setPickupStation(pickupStation);
         rental.setRentalStartTime(LocalDateTime.now());
-        rental.setRentalStatus(com.spincity.model.rental.RentalStatus.Active);
-        rental.setPaymentStatus(com.spincity.model.payment.PaymentStatus.Pending);
-        rental.setDepositStatus("NOT_PAID"); // ✅ ADD THIS
-        // ✅ REPLACE rental.setTotalAmount(0.0) WITH THIS
+
+        // ── KEY FIX: Set rentalStatus = Pending, NOT Active ──────────────────
+        // For Cash on Pickup: stays Pending until employee approves
+        // For UPI/Card/Wallet: will also be Pending until approved,
+        //   but the frontend skips the approval wait for digital payments
+        rental.setRentalStatus(RentalStatus.Pending);
+
+        rental.setApprovalStatus(RentalTransaction.ApprovalStatus.Pending);
+        rental.setPaymentStatus("Pending");
+        rental.setDepositStatus("NOT_PAID");
+
         if (request.getBookedAmount() != null && request.getBookedAmount() > 0) {
-            rental.setTotalAmount(request.getBookedAmount()); // save real booked price
+            rental.setTotalAmount(request.getBookedAmount());
         } else {
             rental.setTotalAmount(0.0);
         }
 
         if (request.getExpectedReturnTime() != null) {
-            rental.setRentalEndTime(
-                    LocalDateTime.parse(request.getExpectedReturnTime())
-            );
+            rental.setRentalEndTime(LocalDateTime.parse(request.getExpectedReturnTime()));
         }
-        System.out.println(">>> expectedReturnTime = " + request.getExpectedReturnTime());
 
         if (request.getReturnStationId() != null) {
             Station returnStation = stationRepository
@@ -145,43 +149,15 @@ public class RentalServiceImpl implements RentalService {
                 rental.setReturnStation(returnStation);
             }
         }
-        // Will be calculated on end
+
         rental.setCreatedAt(LocalDateTime.now());
         rental.setUpdatedAt(LocalDateTime.now());
 
-        // ✅ ADD THIS LOG
-        System.out.println(">>> bookedAmount = " + request.getBookedAmount());
-
-// ✅ ADD THESE
-        if (request.getExpectedReturnTime() != null) {
-            rental.setRentalEndTime(
-                    LocalDateTime.parse(request.getExpectedReturnTime())
-            );
-        }
-        System.out.println(">>> expectedReturnTime = " + request.getExpectedReturnTime());
-        if (request.getReturnStationId() != null) {
-            Station returnStation = stationRepository
-                    .findById(request.getReturnStationId().longValue())
-                    .orElse(null);
-            if (returnStation != null) {
-                rental.setReturnStation(returnStation);
-            }
-        }
+        // ── KEY FIX: Do NOT touch cycle status or station count here ─────────
+        // These are updated in approveRide() when employee approves.
+        // Previously this was done here AND in approveRide, causing double-decrement.
 
         RentalTransaction savedRental = rentalTransactionRepository.save(rental);
-
-        // Update cycle status to Rented
-        cycle.setCurrentStatus(CycleStatus.Rented);
-        cycle.setCurrentStationId(null); // No longer at station
-        cycleRepository.save(cycle);
-
-        // Update station available cycles count
-        if (pickupStation.getAvailableCycles() != null && pickupStation.getAvailableCycles() > 0) {
-            pickupStation.setAvailableCycles(pickupStation.getAvailableCycles() - 1);
-            stationRepository.save(pickupStation);
-        }
-
-        // Convert to DTO
         return convertToHistoryDTO(savedRental);
     }
 
@@ -189,7 +165,6 @@ public class RentalServiceImpl implements RentalService {
     @Override
     @Transactional
     public RentalHistoryDTO endRental(Long transactionId, Integer returnStationId) {
-        // Fetch rental
         RentalTransaction rental = rentalTransactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Rental transaction not found"));
 
@@ -197,68 +172,58 @@ public class RentalServiceImpl implements RentalService {
             throw new RuntimeException("Rental is not active");
         }
 
-        // Validate return station
         Station returnStation = stationRepository.findById(returnStationId.longValue())
                 .orElseThrow(() -> new RuntimeException("Return station not found"));
 
-        // Calculate rental duration
         LocalDateTime endTime = LocalDateTime.now();
         Duration duration = Duration.between(rental.getRentalStartTime(), endTime);
         int durationMinutes = (int) duration.toMinutes();
 
-        // ✅ Get membership type from customer string field
         Customer customer = rental.getCustomer();
-        String membershipType = customer.getMembershipType(); // "Monthly", "Weekly" etc
+        String membershipType = customer.getMembershipType();
 
-        // ✅ Determine free minutes based on membership
         int freeMinutes = 0;
         if (membershipType != null) {
             switch (membershipType.toUpperCase()) {
-                case "MONTHLY":    freeMinutes = 15; break;
-                case "QUARTERLY":  freeMinutes = 30; break;
-                default:           freeMinutes = 0;  break;
+                case "MONTHLY":   freeMinutes = 15; break;
+                case "QUARTERLY": freeMinutes = 30; break;
+                default:          freeMinutes = 0;  break;
             }
         }
 
-        // ✅ Calculate final amount
         double finalAmount;
-
         if (durationMinutes <= freeMinutes) {
-            // Ride within free minutes — completely free!
             finalAmount = 0.0;
         } else if (rental.getTotalAmount() != null && rental.getTotalAmount() > 0) {
-            // Use booked amount saved from frontend
             finalAmount = rental.getTotalAmount();
         } else {
-            // Fallback: calculate ₹5 per 30 min
             finalAmount = Math.ceil(durationMinutes / 30.0) * 5.0;
         }
 
-        // Update rental
         rental.setRentalEndTime(endTime);
         rental.setRentalDuration(durationMinutes);
         rental.setReturnStation(returnStation);
         rental.setTotalAmount(finalAmount);
-        rental.setRentalStatus(RentalStatus.Completed);
+        rental.setRentalStatus(RentalStatus.Pending);  // ✅ wait for employee
+// Don't update cycle/station here — do it in completeRide() by employee
 
-        // ✅ Payment status based on wallet
         if (customer.getWalletBalance() != null
                 && customer.getWalletBalance() >= finalAmount) {
             customer.setWalletBalance(customer.getWalletBalance() - finalAmount);
-            rental.setPaymentStatus(PaymentStatus.Success);
+            rental.setRentalStatus(RentalStatus.Pending);  // ✅ wait for employee
+// Don't update cycle/station here — do it in completeRide() by employee
         } else {
-            rental.setPaymentStatus(PaymentStatus.Pending);
+            rental.setPaymentStatus("Pending");
         }
 
         RentalTransaction updatedRental = rentalTransactionRepository.save(rental);
         customerRepository.save(customer);
 
-        // Update cycle status
+        // Update cycle status back to Available
         Cycle cycle = rental.getCycle();
         cycle.setCurrentStatus(CycleStatus.Available);
         cycle.setCurrentStationId(returnStationId.longValue());
-        cycle.setTotalRides((cycle.getTotalRides() != null
-                ? cycle.getTotalRides() : 0) + 1);
+        cycle.setTotalRides((cycle.getTotalRides() != null ? cycle.getTotalRides() : 0) + 1);
         cycleRepository.save(cycle);
 
         // Update return station count
@@ -272,7 +237,6 @@ public class RentalServiceImpl implements RentalService {
         return convertToHistoryDTO(updatedRental);
     }
 
-    // Helper method
     private RentalHistoryDTO convertToHistoryDTO(RentalTransaction rental) {
         RentalHistoryDTO dto = new RentalHistoryDTO();
         dto.setTransactionId(rental.getTransactionId());
@@ -285,7 +249,7 @@ public class RentalServiceImpl implements RentalService {
         dto.setRentalEndTime(rental.getRentalEndTime());
         dto.setRentalDuration(rental.getRentalDuration());
         dto.setTotalAmount(rental.getTotalAmount());
-        dto.setPaymentStatus(rental.getPaymentStatus().name());
+        dto.setPaymentStatus(rental.getPaymentStatus());
         dto.setRentalStatus(rental.getRentalStatus().name());
         return dto;
     }

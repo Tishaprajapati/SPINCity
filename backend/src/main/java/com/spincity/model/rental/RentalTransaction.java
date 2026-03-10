@@ -44,9 +44,18 @@ public class RentalTransaction {
     @Column(name = "total_amount")
     private Double totalAmount;
 
-    @Enumerated(EnumType.STRING)
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+
     @Column(name = "payment_status", nullable = false)
-    private PaymentStatus paymentStatus;
+    private String paymentStatus = "Pending";
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rental_status", nullable = false)
@@ -73,6 +82,8 @@ public class RentalTransaction {
 
     @Column(name = "approval_time")
     private LocalDateTime approvalTime;
+
+
 
     public Staff getApprovedByEmp() { return approvedByEmp; }
     public void setApprovedByEmp(Staff approvedByEmp) { this.approvedByEmp = approvedByEmp; }
@@ -122,8 +133,7 @@ public class RentalTransaction {
     public Double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
 
-    public PaymentStatus getPaymentStatus() { return paymentStatus; }
-    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
+
 
     public RentalStatus getRentalStatus() { return rentalStatus; }
     public void setRentalStatus(RentalStatus rentalStatus) { this.rentalStatus = rentalStatus; }

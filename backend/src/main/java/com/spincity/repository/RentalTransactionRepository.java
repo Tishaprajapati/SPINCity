@@ -36,11 +36,19 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
     // Find all rentals by customer
     List<RentalTransaction> findByCustomer_CustomerIdOrderByRentalStartTimeDesc(Integer customerId);
 
-    // Find active rental (status = Active)
-    @Query("SELECT r FROM RentalTransaction r WHERE r.customer.customerId = :customerId AND r.rentalStatus = 'Active'")
+    // ── KEY FIX ───────────────────────────────────────────────────────────────
+    // Only returns a rental as "active" if it is BOTH:
+    //   rentalStatus = Active  (employee approved it)
+    //   approvalStatus = Approved
+    // This means a pending cash booking (approvalStatus=Pending, rentalStatus=Pending)
+    // does NOT block the customer from making a new booking after a rejection.
+    @Query("SELECT r FROM RentalTransaction r " +
+            "WHERE r.customer.customerId = :customerId " +
+            "AND r.rentalStatus = 'Active' " +
+            "AND r.approvalStatus = 'Approved'")
     RentalTransaction findActiveRentalByCustomerId(@Param("customerId") Integer customerId);
 
-    // Pending approvals at a specific station
+    // Pending approvals at a specific station — unchanged, already correct
     @Query("SELECT r FROM RentalTransaction r WHERE r.pickupStation.stationId = :stationId " +
             "AND r.approvalStatus = 'Pending'")
     List<RentalTransaction> findPendingApprovalsByStation(@Param("stationId") Long stationId);
@@ -50,7 +58,7 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
             "AND r.rentalStatus = 'Active'")
     List<RentalTransaction> findActiveRidesByStation(@Param("stationId") Long stationId);
 
-    // Today's completed rentals at a station
+    // Today's rentals at a station
     @Query("SELECT r FROM RentalTransaction r WHERE r.pickupStation.stationId = :stationId " +
             "AND DATE(r.rentalStartTime) = CURRENT_DATE")
     List<RentalTransaction> findTodaysRentalsByStation(@Param("stationId") Long stationId);
@@ -60,12 +68,16 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
             "AND DATE(r.rentalStartTime) = CURRENT_DATE")
     Long countTodaysCustomersByStation(@Param("stationId") Long stationId);
 
-
+    @Query("SELECT CAST(r.approvalStatus AS string) FROM RentalTransaction r WHERE r.transactionId = :transactionId")
+    String findApprovalStatusById(@Param("transactionId") Long transactionId);
 
     // Count total rides by customer
     long countByCustomer_CustomerId(Integer customerId);
 
-    // NEW: Get rental history with all details
+    @Query("SELECT CAST(r.rentalStatus AS string) FROM RentalTransaction r WHERE r.transactionId = :transactionId")
+    String findRentalStatusById(@Param("transactionId") Long transactionId);
+
+    // Rental history with all details
     @Query("""
         SELECT new com.spincity.dto.response.RentalHistoryDTO(
             r.transactionId,

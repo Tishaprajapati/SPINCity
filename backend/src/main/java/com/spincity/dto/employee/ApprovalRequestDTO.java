@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApprovalRequestDTO {
-
+    private Integer customerId;  // ADD THIS
     private Long transactionId;
     private String customerName;
     private String customerPhone;
@@ -19,4 +19,5 @@ public class ApprovalRequestDTO {
     private String depositStatus;
     private String paymentStatus;
     private LocalDateTime rentalStartTime;
+
 }

@@ -52,8 +52,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/customers/notifications/send")
                         .hasRole("ADMIN")
                         // ✅ EMPLOYEE
+                        // ✅ To this — add STAFF
                         .requestMatchers("/api/employee/**")
-                        .hasAnyRole("ADMIN", "EMPLOYEE")
+                        .hasAnyRole("ADMIN", "EMPLOYEE", "STAFF")
 
                         // ✅ USER/CUSTOMER — membership
                         .requestMatchers("/api/user/membership/**")
@@ -76,9 +77,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/stations/**")
                         .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
 
-                        .requestMatchers("/api/employee/**")
-                        .hasAnyRole("ADMIN", "EMPLOYEE")
 
+//                        .requestMatchers("/api/employee/ride-status/**").permitAll()
                         // ✅ Everything else needs auth
                         .anyRequest().authenticated()
                 )

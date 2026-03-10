@@ -1,9 +1,6 @@
 package com.spincity.service.employee;
 
-import com.spincity.dto.employee.ApprovalRequestDTO;
-import com.spincity.dto.employee.CustomerDetailDTO;
-import com.spincity.dto.employee.EmployeeDashboardDTO;
-import com.spincity.dto.employee.RiderListDTO;
+import com.spincity.dto.employee.*;
 
 import java.util.List;
 
@@ -24,10 +21,15 @@ public interface EmployeeDashboardService {
     // Customer full details
     CustomerDetailDTO getCustomerDetails(Integer customerId);
 
-
+    void completeRide(Long transactionId, Integer empId);
     // Mark deposit as collected
     void collectDeposit(Long transactionId);
 
+    String getRideStatus(Long transactionId);
     // Mark deposit as returned
     void returnDeposit(Long transactionId);
+
+    public void updatePaymentStatus(Long transactionId, String status);
+
+    List<ActiveRideDTO> getActiveRides(Integer stationId);
 }

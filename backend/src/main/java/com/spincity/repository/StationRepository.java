@@ -16,6 +16,7 @@ public interface StationRepository extends JpaRepository<Station, Long> {
     // NEW: Find all active stations
     List<Station> findByStatusOrderByStationNameAsc(StationStatus status);
 
+
     // NEW: Find all stations with available cycles
     @Query("SELECT s FROM Station s WHERE s.availableCycles > 0 AND s.status = 'Active' ORDER BY s.stationName")
     List<Station> findStationsWithAvailableCycles();

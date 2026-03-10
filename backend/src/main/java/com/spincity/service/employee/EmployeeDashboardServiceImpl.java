@@ -13,6 +13,12 @@ import com.spincity.repository.customer.CustomerRepository;
 import com.spincity.repository.UserMembershipRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.spincity.model.cycle.Cycle;
+import com.spincity.model.cycle.CycleStatus;
+import com.spincity.model.station.Station;
+import com.spincity.repository.StationRepository;
+import com.spincity.dto.employee.ActiveRideDTO;
+import com.spincity.model.rental.RentalStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +33,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     private final CycleRepository cycleRepository;
     private final CustomerRepository customerRepository;
     private final UserMembershipRepository userMembershipRepository;
+    private final StationRepository stationRepository;
 
     // ── Dashboard Summary ─────────────────────────────────────────────────────
 
@@ -67,14 +74,14 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
                 .findPendingApprovalsByStation(stationId)
                 .stream()
                 .map(r -> new ApprovalRequestDTO(
-                        r.getTransactionId(),
+                        r.getCustomer().getCustomerId(),
+                        r.getTransactionId(),// ADD as first param
                         r.getCustomer().getCustomerName(),
                         r.getCustomer().getCustomerPhone(),
                         r.getCycle().getCycleName(),
                         r.getCycle().getCycleType(),
                         r.getDepositStatus(),
-                        r.getPaymentStatus().name(),
-
+                        r.getPaymentStatus(),
                         r.getRentalStartTime()
                 ))
                 .collect(Collectors.toList());
@@ -83,9 +90,27 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     // ── Approve / Reject Ride ─────────────────────────────────────────────────
 
     @Override
+    public void updatePaymentStatus(Long transactionId, String status) {
+        RentalTransaction transaction = rentalTransactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        transaction.setPaymentStatus(status);
+        rentalTransactionRepository.save(transaction);
+    }
+
+
+    @Override
     public void approveRide(Long transactionId, Long empId, String action) {
         RentalTransaction transaction = rentalTransactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found: " + transactionId));
+
+        if (action.equalsIgnoreCase("Approved")) {
+            if (!"Paid".equals(transaction.getPaymentStatus())) {
+                throw new RuntimeException("Cannot approve: Payment not marked as Paid");
+            }
+            if (!"COLLECTED".equals(transaction.getDepositStatus())) {
+                throw new RuntimeException("Cannot approve: Deposit not collected");
+            }
+        }
 
         Staff emp = new Staff();
         emp.setId(empId);
@@ -93,9 +118,23 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
         transaction.setApprovedByEmp(emp);
         transaction.setApprovalTime(LocalDateTime.now());
 
+        // REPLACE WITH
         if (action.equalsIgnoreCase("Approved")) {
             transaction.setApprovalStatus(RentalTransaction.ApprovalStatus.Approved);
             transaction.setRentalStatus(com.spincity.model.rental.RentalStatus.Active);
+
+            // NOW update cycle status
+            Cycle cycle = transaction.getCycle();
+            cycle.setCurrentStatus(CycleStatus.Rented);
+            cycle.setCurrentStationId(null);
+            cycleRepository.save(cycle);
+
+            // NOW reduce station count
+            Station station = transaction.getPickupStation();
+            if (station.getAvailableCycles() != null && station.getAvailableCycles() > 0) {
+                station.setAvailableCycles(station.getAvailableCycles() - 1);
+                stationRepository.save(station);
+            }
         } else {
             transaction.setApprovalStatus(RentalTransaction.ApprovalStatus.Rejected);
         }
@@ -111,6 +150,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
                 .findTodaysRentalsByStation(stationId)
                 .stream()
                 .map(r -> new RiderListDTO(
+                        r.getCustomer().getCustomerId(),
                         r.getTransactionId(),
                         r.getCustomer().getCustomerName(),
                         r.getCustomer().getCustomerPhone(),
@@ -127,9 +167,10 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
 
     @Override
     public CustomerDetailDTO getCustomerDetails(Integer customerId) {
+
         var customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found: " + customerId));
-
+        System.out.println(">>> idProofDocument = " + customer.getIdProofDocument());
         var membership = userMembershipRepository
                 .findActiveByCustomerId(customerId);
 
@@ -137,18 +178,53 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
                 .countByCustomer_CustomerId(customerId);
 
         return new CustomerDetailDTO(
-                customer.getCustomerId(),
-                customer.getCustomerName(),
-                customer.getCustomerEmail(),
-                customer.getCustomerPhone(),
-                customer.getCustomerAddress(),
-                customer.getMembershipType(),
-                membership != null ? membership.getStatus().name() : "No Membership",
-                membership != null ? membership.getStartDate() : null,
-                membership != null ? membership.getEndDate() : null,
-                totalRides,
-                customer.getWalletBalance()
+                customer.getCustomerId(),           // Integer customerId
+                customer.getCustomerName(),         // String customerName
+                customer.getCustomerEmail(),        // String customerEmail
+                customer.getCustomerPhone(),        // String customerPhone
+                customer.getCustomerAddress(),      // String customerAddress
+                customer.getIdProofDocument(),      // String idProofUrl  ← ADD THIS
+                customer.getMembershipType(),       // String membershipType
+                membership != null ? membership.getStatus().name() : "No Membership", // String membershipStatus
+                membership != null ? membership.getStartDate() : null,  // LocalDate membershipStart
+                membership != null ? membership.getEndDate() : null,    // LocalDate membershipEnd
+                totalRides,                         // Long totalRides
+                customer.getWalletBalance()         // Double walletBalance
+
         );
+
+
+    }
+
+    @Override
+    public String getRideStatus(Long transactionId) {
+        return rentalTransactionRepository.findRentalStatusById(transactionId);
+    }
+
+    @Override
+    public void completeRide(Long transactionId, Integer empId) {
+        RentalTransaction rental = rentalTransactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Rental not found"));
+
+        // Fix 1: Use correct RentalStatus enum
+        rental.setRentalStatus(RentalStatus.Completed);
+        rental.setRentalEndTime(LocalDateTime.now());
+
+        // Fix 2: Use setCurrentStatus not setStatus
+        Cycle cycle = rental.getCycle();
+        cycle.setCurrentStatus(CycleStatus.Available);
+        cycle.setCurrentStationId(
+                rental.getReturnStation().getStationId()
+        );
+        cycleRepository.save(cycle);
+
+        Station station = rental.getReturnStation();
+        if (station != null) {
+            station.setAvailableCycles(station.getAvailableCycles() + 1);
+            stationRepository.save(station);
+        }
+
+        rentalTransactionRepository.save(rental);
     }
 
     @Override
@@ -165,5 +241,27 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found: " + transactionId));
         transaction.setDepositStatus("RETURNED");
         rentalTransactionRepository.save(transaction);
+    }
+
+
+
+    @Override
+    public List<ActiveRideDTO> getActiveRides(Integer stationId) {
+        return rentalTransactionRepository
+                .findActiveRidesByStation((long) stationId)
+                .stream()
+                .map(r -> new ActiveRideDTO(
+                        r.getTransactionId(),
+                        r.getCustomer().getCustomerName(),
+                        r.getCustomer().getCustomerPhone(),
+                        r.getCycle().getCycleName(),
+                        String.valueOf(r.getCycle().getCycleType()),
+                        r.getRentalStartTime(),
+                        r.getRentalEndTime(),
+                        r.getDepositStatus() != null ? r.getDepositStatus().toString() : "NOT_PAID", // Fix 3: toString not .name()
+                        r.getPickupStation().getStationId(),
+                        r.getReturnStation() != null ? r.getReturnStation().getStationId() : null
+                ))
+                .collect(Collectors.toList());
     }
 }

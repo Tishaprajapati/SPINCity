@@ -17,7 +17,7 @@ public class CustomerDetailDTO {
     private String customerEmail;
     private String customerPhone;
     private String customerAddress;
-
+    private String idProofUrl;  // ADD THIS
     // Membership info
     private String membershipType;
     private String membershipStatus;

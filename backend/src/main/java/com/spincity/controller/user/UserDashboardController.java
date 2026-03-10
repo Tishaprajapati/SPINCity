@@ -20,6 +20,7 @@ public class UserDashboardController {
             UserDashboardDTO dashboard = userDashboardService.getUserDashboard(customerId);
             return ResponseEntity.ok(dashboard);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
