@@ -2,6 +2,7 @@ import axiosInstance from '../config/axiosConfig';
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
+
 export const fetchDashboardSummary = async (stationId) => {
   const res = await axiosInstance.get(`/employee/dashboard/${stationId}`);
   return res.data;
@@ -17,6 +18,18 @@ export const fetchPendingApprovals = async (stationId) => {
 export const approveRide = async (transactionId, empId, action) => {
   const res = await axiosInstance.put(
     `/employee/approvals/${transactionId}/action?empId=${empId}&action=${action}`
+  );
+  return res.data;
+};
+
+export const fetchActiveRides = async (stationId) => {
+  const res = await axiosInstance.get(`/employee/active-rides/${stationId}`);
+  return res.data;
+};
+
+export const completeRide = async (transactionId, empId) => {
+  const res = await axiosInstance.put(
+    `/employee/complete-ride/${transactionId}?empId=${empId}`
   );
   return res.data;
 };
@@ -49,6 +62,14 @@ export const reportDefect = async (cycleId, conditionNote, conditionStatus, empI
   );
   return res.data;
 };
+
+export const updatePaymentStatus = async (transactionId, status) => {
+  const res = await axiosInstance.put(
+    `/employee/payment-status/${transactionId}?status=${status}`
+  );
+  return res.data;
+};
+
 
 // ── Deposit ───────────────────────────────────────────────────────────────────
 

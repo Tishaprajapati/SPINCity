@@ -87,9 +87,22 @@ const userService = {
     return response.data;
   },
 
-  getCurrentMembership(customerId) {
-    return axios.get(`/user/membership/current?customerId=${customerId}`);
-  },
+  // getCurrentMembership(customerId) {
+  //   return axios.get(`/user/membership/current?customerId=${customerId}`);
+  // },
+
+  updatePaymentStatus: async (transactionId, status) => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `http://localhost:8080/api/employee/payment-status/${transactionId}?status=${status}`,
+    {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.text();
+},
+
 
   cancelMembership: async (customerId) => {
     const response = await axiosInstance.post(
@@ -117,14 +130,7 @@ const userService = {
     return response.data;
   },
 
-  startRental: async (customerId, cycleId, pickupStationId) => {
-    const response = await axiosInstance.post("/user/rentals/start", {
-      customerId,
-      cycleId,
-      pickupStationId,
-    });
-    return response.data;
-  },
+
 
   endRental: async (transactionId, returnStationId) => {
     const response = await axiosInstance.post(
@@ -235,6 +241,30 @@ getCustomerFeedback: async (customerId) => {
   const response = await axiosInstance.get(`/user/feedback/customer/${customerId}`);
   return response.data;
 },
+
+checkRideStatus: async (transactionId) => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `http://localhost:8080/api/employee/ride-status/${transactionId}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return await response.text();
+},
+
+checkApprovalStatus: async (transactionId) => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `http://localhost:8080/api/employee/approval-status/${transactionId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const status = await response.text();
+  return status;
+},
+
 };
 
 export default userService;

@@ -1475,6 +1475,26 @@
   margin-top: 6px;
 }
 
+
+.ud-end-ride-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #fff8e1, #ffe082);
+  color: #f57c00;
+  border: 1px solid #ffe082;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@keyframes ud-spin {
+  to { transform: rotate(360deg); }
+}
+
+
 /* ══════════════════════════════════════════
    KEYFRAME ANIMATIONS
 ══════════════════════════════════════════ */

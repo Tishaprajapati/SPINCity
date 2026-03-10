@@ -73,6 +73,39 @@ const UserDashboard = () => {
     if (customerId) fetchMembership();
   }, [customerId]);
 
+
+
+  // ✅ Poll for ride completion after user ends ride
+useEffect(() => {
+  let pollInterval = null;
+
+  const checkRideCompletion = async () => {
+    try {
+      const data = await userService.getDashboard(customerId);
+      // If no active rental anymore — ride is completed by employee
+      if (!data.activeRental) {
+        clearInterval(pollInterval);
+        setDashboardData(data);
+        localStorage.removeItem("activeRide");
+        localStorage.removeItem("cashPendingRide");
+        setShowDepositCard(false);
+        setShowRatingModal(true); // ✅ directly show rating modal
+      }
+    } catch (_) {}
+  };
+
+  // Only start polling if deposit card is showing
+  if (showDepositCard) {
+    pollInterval = setInterval(checkRideCompletion, 5000); // every 5 seconds
+  }
+
+  return () => {
+    if (pollInterval) clearInterval(pollInterval);
+  };
+}, [showDepositCard]); // ← runs when deposit card appears
+
+
+
   useEffect(() => {
     const fetchShowcaseCycles = async () => {
       try {
@@ -1018,23 +1051,31 @@ const UserDashboard = () => {
               </button>
               <button
                 className="ud-btn ud-btn-danger"
-                onClick={async () => {
-                  if (!selectedEndStation) {
-                    alert("Please select a return station!");
-                    return;
-                  }
-                  try {
-                    await userService.endRental(
-                      activeRental.rentalId,
-                      parseInt(selectedEndStation),
-                    );
-                    setShowEndRideModal(false);
-                    setShowDepositCard(true);
-                    fetchDashboardData();
-                  } catch (_) {
-                    alert("Could not end ride. Please try again.");
-                  }
-                }}
+               onClick={async () => {
+  if (!selectedEndStation) {
+    alert("Please select a return station!");
+    return;
+  }
+  try {
+    await userService.endRental(
+      activeRental.rentalId,
+      parseInt(selectedEndStation),
+    );
+      localStorage.removeItem("activeRide");      // ✅ ADD
+  localStorage.removeItem("cashPendingRide");
+    setShowEndRideModal(false);
+      setShowDepositCard(true); // ✅ starts the polling via useEffect above
+  fetchDashboardData(); 
+    setShowDepositCard(true);
+    fetchDashboardData();
+  } catch (err) {
+    console.error("End ride error:", err);
+    // ✅ Still show deposit card even if backend has minor issue
+    setShowEndRideModal(false);
+    setShowDepositCard(true);
+    fetchDashboardData();
+  }
+}}
               >
                 Confirm End Ride
               </button>
@@ -1057,35 +1098,15 @@ const UserDashboard = () => {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
             </div>
-            <h3>Ride Ended Successfully</h3>
-            <p>Thank you for riding with SpinCity.</p>
+            <h3>End Ride Request Sent!</h3>
+            <p>
+              The station employee will verify the cycle and complete your ride.
+            </p>
             <div className="ud-deposit-box">
               <span>Security Deposit</span>
-              <strong>Refundable at station</strong>
+              <strong>Employee will return it after cycle check ✅</strong>
             </div>
-            <label className="ud-checkbox-row">
-              <input
-                type="checkbox"
-                checked={depositAcknowledged}
-                onChange={(e) => setDepositAcknowledged(e.target.checked)}
-              />
-              <span>
-                I have collected my security deposit back from the station
-                employee.
-              </span>
-            </label>
-            <button
-              className="ud-btn ud-btn-primary ud-btn-full"
-              disabled={!depositAcknowledged}
-              onClick={() => {
-                setShowDepositCard(false);
-                setDepositAcknowledged(false);
-                setShowRatingModal(true);
-              }}
-            >
-              Done
-            </button>
-          </div>
+             </div>
         </div>
       )}
 
