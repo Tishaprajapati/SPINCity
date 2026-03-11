@@ -31,5 +31,9 @@ public interface EmployeeDashboardService {
 
     public void updatePaymentStatus(Long transactionId, String status);
 
+
+    void forfeitDeposit(Long transactionId);
+
+
     List<ActiveRideDTO> getActiveRides(Integer stationId);
 }

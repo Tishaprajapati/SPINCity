@@ -147,7 +147,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     @Override
     public List<RiderListDTO> getTodaysRiders(Long stationId) {
         return rentalTransactionRepository
-                .findTodaysRentalsByStation(stationId)
+                .findTodaysRentalsByStationBoth(stationId) // ✅ changed method
                 .stream()
                 .map(r -> new RiderListDTO(
                         r.getCustomer().getCustomerId(),
@@ -202,20 +202,26 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     }
 
     @Override
+    public void forfeitDeposit(Long transactionId) {
+        RentalTransaction transaction = rentalTransactionRepository
+                .findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+        transaction.setDepositStatus("FORFEITED");
+        rentalTransactionRepository.save(transaction);
+    }
+
+    @Override
     public void completeRide(Long transactionId, Integer empId) {
         RentalTransaction rental = rentalTransactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Rental not found"));
 
-        // Fix 1: Use correct RentalStatus enum
+        // ✅ Complete ride regardless of deposit status
         rental.setRentalStatus(RentalStatus.Completed);
         rental.setRentalEndTime(LocalDateTime.now());
 
-        // Fix 2: Use setCurrentStatus not setStatus
         Cycle cycle = rental.getCycle();
         cycle.setCurrentStatus(CycleStatus.Available);
-        cycle.setCurrentStationId(
-                rental.getReturnStation().getStationId()
-        );
+        cycle.setCurrentStationId(rental.getReturnStation().getStationId());
         cycleRepository.save(cycle);
 
         Station station = rental.getReturnStation();
@@ -248,7 +254,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     @Override
     public List<ActiveRideDTO> getActiveRides(Integer stationId) {
         return rentalTransactionRepository
-                .findActiveRidesByStation((long) stationId)
+                .findRidesEndingAtStation((long) stationId) // ✅ changed method
                 .stream()
                 .map(r -> new ActiveRideDTO(
                         r.getTransactionId(),
@@ -258,7 +264,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
                         String.valueOf(r.getCycle().getCycleType()),
                         r.getRentalStartTime(),
                         r.getRentalEndTime(),
-                        r.getDepositStatus() != null ? r.getDepositStatus().toString() : "NOT_PAID", // Fix 3: toString not .name()
+                        r.getDepositStatus() != null ? r.getDepositStatus() : "NOT_PAID",
                         r.getPickupStation().getStationId(),
                         r.getReturnStation() != null ? r.getReturnStation().getStationId() : null
                 ))

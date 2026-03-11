@@ -26,6 +26,12 @@ public class EmployeeDashboardController {
         return ResponseEntity.ok(employeeDashboardService.getDashboardSummary(stationId));
     }
 
+    @PutMapping("/deposit/forfeit/{transactionId}")
+    public ResponseEntity<String> forfeitDeposit(@PathVariable Long transactionId) {
+        employeeDashboardService.forfeitDeposit(transactionId);
+        return ResponseEntity.ok("Deposit forfeited");
+    }
+
     // Pending approvals list
     @GetMapping("/approvals/{stationId}")
     public ResponseEntity<List<ApprovalRequestDTO>> getPendingApprovals(@PathVariable Long stationId) {

@@ -49,8 +49,11 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
     RentalTransaction findActiveRentalByCustomerId(@Param("customerId") Integer customerId);
 
     // Pending approvals at a specific station — unchanged, already correct
+    // ✅ Only show rides where rentalStatus is ALSO Pending (not Active)
+// This means it's a NEW booking request, not an end-ride request
     @Query("SELECT r FROM RentalTransaction r WHERE r.pickupStation.stationId = :stationId " +
-            "AND r.approvalStatus = 'Pending'")
+            "AND r.approvalStatus = 'Pending' " +
+            "AND r.rentalStatus = 'Pending'")  // ✅ ADD THIS LINE
     List<RentalTransaction> findPendingApprovalsByStation(@Param("stationId") Long stationId);
 
     // All active rides at a specific station
@@ -77,6 +80,18 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
     @Query("SELECT CAST(r.rentalStatus AS string) FROM RentalTransaction r WHERE r.transactionId = :transactionId")
     String findRentalStatusById(@Param("transactionId") Long transactionId);
 
+
+    // Rides ending at this station (status Active OR Pending end request)
+    @Query("SELECT r FROM RentalTransaction r WHERE r.returnStation.stationId = :stationId " +
+            "AND r.rentalStatus = 'Pending' " +
+            "AND r.approvalStatus = 'Approved'")  // ✅ Already approved ride, just ending
+    List<RentalTransaction> findRidesEndingAtStation(@Param("stationId") Long stationId);
+
+    // Today's riders for BOTH pickup and return station
+    @Query("SELECT r FROM RentalTransaction r WHERE " +
+            "(r.pickupStation.stationId = :stationId OR r.returnStation.stationId = :stationId) " +
+            "AND DATE(r.rentalStartTime) = CURRENT_DATE")
+    List<RentalTransaction> findTodaysRentalsByStationBoth(@Param("stationId") Long stationId);
     // Rental history with all details
     @Query("""
         SELECT new com.spincity.dto.response.RentalHistoryDTO(
