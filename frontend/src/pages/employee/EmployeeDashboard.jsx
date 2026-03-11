@@ -36,6 +36,8 @@ import {
   returnDeposit,
   fetchCustomerDetails,
   updatePaymentStatus,
+  completeRide,  
+  forfeitDeposit,
 } from "../../service/employeeService";
 
 const EmployeeDashboard = () => {
@@ -84,6 +86,24 @@ const EmployeeDashboard = () => {
     }, 15000);
     return () => clearInterval(t);
   }, [stationId]);
+
+  const handleCompleteRide = async (transactionId) => {
+    try {
+      await completeRide(transactionId, empId);
+      loadAllData();
+    } catch {
+      alert("Failed to complete ride");
+    }
+  };
+
+  const handleForfeitDeposit = async (transactionId) => {
+    try {
+      await forfeitDeposit(transactionId);
+      loadAllData();
+    } catch {
+      alert("Failed to forfeit deposit");
+    }
+  };
 
   const loadAllData = async () => {
     if (!stationId) return;
@@ -707,33 +727,95 @@ const EmployeeDashboard = () => {
                           <div className="td-actions">
                             <button
                               className="emp-btn-sm secondary"
-                              onClick={() => {
-                                console.log("Rider object:", r);
-                                handleViewCustomer(r.customerId);
-                              }}
+                              onClick={() => handleViewCustomer(r.customerId)}
                             >
                               <Eye size={13} />
                             </button>
-                            {r.depositStatus === "NOT_PAID" && (
-                              <button
-                                className="emp-btn-sm primary"
-                                onClick={() =>
-                                  handleCollectDeposit(r.transactionId)
-                                }
-                              >
-                                Collect
-                              </button>
-                            )}
-                            {r.depositStatus === "COLLECTED" && (
-                              <button
-                                className="emp-btn-sm green"
-                                onClick={() =>
-                                  handleReturnDeposit(r.transactionId)
-                                }
-                              >
-                                Return
-                              </button>
-                            )}
+
+                            {/* ✅ Ride waiting to start — collect deposit */}
+                            {r.rentalStatus === "Active" &&
+                              r.depositStatus === "NOT_PAID" && (
+                                <button
+                                  className="emp-btn-sm primary"
+                                  onClick={() =>
+                                    handleCollectDeposit(r.transactionId)
+                                  }
+                                >
+                                  Collect Deposit
+                                </button>
+                              )}
+
+                            {/* ✅ User requested end ride — show return or forfeit */}
+                            {r.rentalStatus === "Pending" &&
+                              r.depositStatus === "COLLECTED" && (
+                                <>
+                                  <button
+                                    className="emp-btn-sm green"
+                                    onClick={async () => {
+                                      await returnDeposit(r.transactionId);
+                                      await completeRide(
+                                        r.transactionId,
+                                        empId,
+                                      );
+                                      loadAllData();
+                                    }}
+                                  >
+                                    ✅ Return & End
+                                  </button>
+                                  <button
+                                    className="emp-btn-sm danger"
+                                    onClick={async () => {
+                                      if (
+                                        window.confirm(
+                                          "Forfeit deposit due to damage?",
+                                        )
+                                      ) {
+                                        await forfeitDeposit(r.transactionId);
+                                        await completeRide(
+                                          r.transactionId,
+                                          empId,
+                                        );
+                                        loadAllData();
+                                      }
+                                    }}
+                                  >
+                                    ❌ Forfeit & End
+                                  </button>
+                                </>
+                              )}
+
+                            {/* ✅ Deposit not collected but user ended ride */}
+                            {r.rentalStatus === "Pending" &&
+                              r.depositStatus === "NOT_PAID" && (
+                                <>
+                                  <button
+                                    className="emp-btn-sm primary"
+                                    onClick={() =>
+                                      handleCollectDeposit(r.transactionId)
+                                    }
+                                  >
+                                    Collect Deposit
+                                  </button>
+                                  <button
+                                    className="emp-btn-sm danger"
+                                    onClick={async () => {
+                                      if (
+                                        window.confirm(
+                                          "End ride without deposit?",
+                                        )
+                                      ) {
+                                        await completeRide(
+                                          r.transactionId,
+                                          empId,
+                                        );
+                                        loadAllData();
+                                      }
+                                    }}
+                                  >
+                                    End Ride
+                                  </button>
+                                </>
+                              )}
                           </div>
                         </td>
                       </tr>

@@ -70,7 +70,12 @@ export const updatePaymentStatus = async (transactionId, status) => {
   return res.data;
 };
 
-
+export const forfeitDeposit = async (transactionId) => {
+  const res = await axiosInstance.put(
+    `/employee/deposit/forfeit/${transactionId}`
+  );
+  return res.data;
+};
 // ── Deposit ───────────────────────────────────────────────────────────────────
 
 export const collectDeposit = async (transactionId) => {

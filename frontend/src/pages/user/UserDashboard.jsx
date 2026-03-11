@@ -73,38 +73,32 @@ const UserDashboard = () => {
     if (customerId) fetchMembership();
   }, [customerId]);
 
-
-
   // ✅ Poll for ride completion after user ends ride
-useEffect(() => {
-  let pollInterval = null;
+  useEffect(() => {
+    let pollInterval = null;
 
-  const checkRideCompletion = async () => {
-    try {
+    // In the polling useEffect — update the deposit modal message based on status
+    const checkRideCompletion = async () => {
       const data = await userService.getDashboard(customerId);
-      // If no active rental anymore — ride is completed by employee
       if (!data.activeRental) {
         clearInterval(pollInterval);
         setDashboardData(data);
         localStorage.removeItem("activeRide");
         localStorage.removeItem("cashPendingRide");
         setShowDepositCard(false);
-        setShowRatingModal(true); // ✅ directly show rating modal
+        setShowRatingModal(true);
       }
-    } catch (_) {}
-  };
+    };
 
-  // Only start polling if deposit card is showing
-  if (showDepositCard) {
-    pollInterval = setInterval(checkRideCompletion, 5000); // every 5 seconds
-  }
+    // Only start polling if deposit card is showing
+    if (showDepositCard) {
+      pollInterval = setInterval(checkRideCompletion, 5000); // every 5 seconds
+    }
 
-  return () => {
-    if (pollInterval) clearInterval(pollInterval);
-  };
-}, [showDepositCard]); // ← runs when deposit card appears
-
-
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+    };
+  }, [showDepositCard]); // ← runs when deposit card appears
 
   useEffect(() => {
     const fetchShowcaseCycles = async () => {
@@ -1051,31 +1045,31 @@ useEffect(() => {
               </button>
               <button
                 className="ud-btn ud-btn-danger"
-               onClick={async () => {
-  if (!selectedEndStation) {
-    alert("Please select a return station!");
-    return;
-  }
-  try {
-    await userService.endRental(
-      activeRental.rentalId,
-      parseInt(selectedEndStation),
-    );
-      localStorage.removeItem("activeRide");      // ✅ ADD
-  localStorage.removeItem("cashPendingRide");
-    setShowEndRideModal(false);
-      setShowDepositCard(true); // ✅ starts the polling via useEffect above
-  fetchDashboardData(); 
-    setShowDepositCard(true);
-    fetchDashboardData();
-  } catch (err) {
-    console.error("End ride error:", err);
-    // ✅ Still show deposit card even if backend has minor issue
-    setShowEndRideModal(false);
-    setShowDepositCard(true);
-    fetchDashboardData();
-  }
-}}
+                onClick={async () => {
+                  if (!selectedEndStation) {
+                    alert("Please select a return station!");
+                    return;
+                  }
+                  try {
+                    await userService.endRental(
+                      activeRental.rentalId,
+                      parseInt(selectedEndStation),
+                    );
+                    localStorage.removeItem("activeRide"); // ✅ ADD
+                    localStorage.removeItem("cashPendingRide");
+                    setShowEndRideModal(false);
+                    setShowDepositCard(true); // ✅ starts the polling via useEffect above
+                    fetchDashboardData();
+                    setShowDepositCard(true);
+                    fetchDashboardData();
+                  } catch (err) {
+                    console.error("End ride error:", err);
+                    // ✅ Still show deposit card even if backend has minor issue
+                    setShowEndRideModal(false);
+                    setShowDepositCard(true);
+                    fetchDashboardData();
+                  }
+                }}
               >
                 Confirm End Ride
               </button>
@@ -1106,7 +1100,7 @@ useEffect(() => {
               <span>Security Deposit</span>
               <strong>Employee will return it after cycle check ✅</strong>
             </div>
-             </div>
+          </div>
         </div>
       )}
 
