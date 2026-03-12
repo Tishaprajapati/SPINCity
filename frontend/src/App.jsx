@@ -27,6 +27,8 @@ import Navbar from "./pages/user/Navbar";
 import RecoverPassword from "./pages/user/RecoverPassword";
 import RideStatusBar from "./pages/user/Ridestatusbar";
 import RideHistory from "./pages/user/Ridehistory";
+import StationAnalytics from "./pages/employee/Stationanalytics";
+import MaintenanceDashboard from './pages/employee/MaintenanceDashboard';
 
 // ✅ Layout that wraps only USER pages
 const UserLayout = () => (
@@ -64,6 +66,8 @@ const router = createBrowserRouter([
   { path: "/cyclemanagement",     element: <CycleManagement /> },
   { path: "/stationmanagement",   element: <StationManagement /> },
   { path: "/maintanencelogging",  element: <MaintanenceLogging /> },
+  {path: "/station-analytics" , element: <StationAnalytics/>},
+  { path: "/maintenancedashboard", element: <MaintenanceDashboard />} ,
 
   // ── ADMIN pages (NO RideStatusBar) ──
   { path: "/admindashboard",          element: <AdminDashboard /> },

@@ -23,10 +23,9 @@ const Icons = {
 
 const STATION_NAV = [
   { label: 'Dashboard',      path: '/employeedashboard', icon: 'Dashboard' },
-  { label: 'Ride Management', icon: 'Approve', sub: [
-    { label: 'Pending Approvals', path: '/employee/approvals',    icon: 'Approve' },
-    { label: "Today's Riders",    path: '/employee/riders',       icon: 'Riders'  },
-  ]},
+
+  { label: 'Station Analytics', path: '/station-analytics', icon: 'Revenue' },
+
   { label: 'Cycles', icon: 'Cycle', sub: [
     { label: 'Cycle Status',  path: '/employee/cycles',        icon: 'Cycle'  },
     { label: 'Report Defect', path: '/employee/report-defect', icon: 'Wrench' },

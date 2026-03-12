@@ -70,6 +70,13 @@ export const updatePaymentStatus = async (transactionId, status) => {
   return res.data;
 };
 
+
+export const fetchStationAnalytics = async (stationId) => {
+  const res = await axiosInstance.get(`/employee/analytics/${stationId}`);
+  return res.data;
+};
+
+
 export const forfeitDeposit = async (transactionId) => {
   const res = await axiosInstance.put(
     `/employee/deposit/forfeit/${transactionId}`
@@ -100,6 +107,31 @@ export const fetchCyclesDueForService = async () => {
   return res.data;
 };
 
+export const fetchAssignedCycles = async (empId) => {
+  const res = await axiosInstance.get(`/employee/maintenance/cycles/assigned/${empId}`);
+  return res.data;
+};
+export const fetchDueCycles = async (empId) => {
+  const res = await axiosInstance.get(`/employee/maintenance/due/assigned/${empId}`);
+  return res.data;
+};
+export const fetchAssignedDefects = async (empId) => {
+  const res = await axiosInstance.get(`/employee/maintenance/defects/assigned/${empId}`);
+  return res.data;
+};
+export const completeMaintenanceService = async (maintenanceId, empId, partsReplaced, cost) => {
+  const res = await axiosInstance.put(`/employee/maintenance/complete/${maintenanceId}?empId=${empId}&partsReplaced=${partsReplaced}&cost=${cost}`);
+  return res.data;
+};
+export const updateCycleStatus = async (cycleId, status) => {
+  const res = await axiosInstance.put(`/employee/maintenance/cycle-status/${cycleId}?status=${encodeURIComponent(status)}`);
+  return res.data;
+};
+export const setNextServiceDate = async (cycleId, date) => {
+  const res = await axiosInstance.put(`/employee/maintenance/cycle/service-date/${cycleId}?nextServiceDate=${date}`);
+  return res.data;
+};
+
 export const completeMaintenance = async (maintenanceId, empId, partsReplaced, cost) => {
   const res = await axiosInstance.put(
     `/employee/maintenance/complete/${maintenanceId}?empId=${empId}&partsReplaced=${partsReplaced}&cost=${cost}`
@@ -107,9 +139,4 @@ export const completeMaintenance = async (maintenanceId, empId, partsReplaced, c
   return res.data;
 };
 
-export const updateCycleStatus = async (cycleId, status) => {
-  const res = await axiosInstance.put(
-    `/employee/maintenance/cycle-status/${cycleId}?status=${status}`
-  );
-  return res.data;
-};
+

@@ -255,7 +255,7 @@ const EmployeeDashboard = () => {
                 <span>EMP-{empId}</span>
                 <span className="emp-dot" />
                 <MapPin size={13} />
-                <span>Station #{stationId}</span>
+                <span>{dashboardData?.stationName || `Station #${stationId}`}</span>
               </div>
             </div>
           </div>

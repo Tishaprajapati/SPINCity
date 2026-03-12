@@ -79,12 +79,18 @@ function Login() {
   localStorage.setItem("staffName", data.user.name);
   localStorage.setItem("stationId", data.user.assignedStation);
 
-  if (data.role === "ADMIN") {
-    console.log("admin dasboard now will come");
-    window.location.href = "/admindashboard";
-  } else {
-    window.location.href = "/employeedashboard";
-  }
+ if (data.role === "ADMIN") {
+  console.log("admin dashboard now will come");
+  window.location.href = "/admindashboard";
+} else if (
+  data.user.designation === "Cycle Maintenance" ||
+  data.role === "MAINTENANCE"
+) {
+  // ✅ ADD THIS BLOCK
+  window.location.href = "/maintenancedashboard";
+} else {
+  window.location.href = "/employeedashboard";
+}
 }
  else {
         console.log("LOGIN FULL RESPONSE ✅", data);
