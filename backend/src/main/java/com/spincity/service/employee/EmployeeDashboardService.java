@@ -34,6 +34,7 @@ public interface EmployeeDashboardService {
 
     void forfeitDeposit(Long transactionId);
 
+    public StationAnalyticsDTO getStationAnalytics(Long stationId);
 
     List<ActiveRideDTO> getActiveRides(Integer stationId);
 }

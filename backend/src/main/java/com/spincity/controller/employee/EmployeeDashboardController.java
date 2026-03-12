@@ -1,15 +1,11 @@
 package com.spincity.controller.employee;
 
-import com.spincity.dto.employee.ApprovalRequestDTO;
-import com.spincity.dto.employee.CustomerDetailDTO;
-import com.spincity.dto.employee.EmployeeDashboardDTO;
-import com.spincity.dto.employee.RiderListDTO;
+import com.spincity.dto.employee.*;
 import com.spincity.repository.RentalTransactionRepository;
 import com.spincity.service.employee.EmployeeDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.spincity.dto.employee.ActiveRideDTO;
 
 import java.util.List;
 
@@ -36,6 +32,14 @@ public class EmployeeDashboardController {
     @GetMapping("/approvals/{stationId}")
     public ResponseEntity<List<ApprovalRequestDTO>> getPendingApprovals(@PathVariable Long stationId) {
         return ResponseEntity.ok(employeeDashboardService.getPendingApprovals(stationId));
+    }
+
+    @GetMapping("/analytics/{stationId}")
+    public ResponseEntity<StationAnalyticsDTO> getStationAnalytics(
+            @PathVariable Long stationId) {
+        return ResponseEntity.ok(
+                employeeDashboardService.getStationAnalytics(stationId)
+        );
     }
 
     // Approve or reject a ride

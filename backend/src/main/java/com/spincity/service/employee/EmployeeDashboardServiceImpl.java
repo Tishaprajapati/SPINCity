@@ -1,9 +1,6 @@
 package com.spincity.service.employee;
 
-import com.spincity.dto.employee.ApprovalRequestDTO;
-import com.spincity.dto.employee.CustomerDetailDTO;
-import com.spincity.dto.employee.EmployeeDashboardDTO;
-import com.spincity.dto.employee.RiderListDTO;
+import com.spincity.dto.employee.*;
 import com.spincity.model.rental.RentalTransaction;
 import com.spincity.model.employee.Staff;
 import com.spincity.repository.RentalTransactionRepository;
@@ -17,7 +14,6 @@ import com.spincity.model.cycle.Cycle;
 import com.spincity.model.cycle.CycleStatus;
 import com.spincity.model.station.Station;
 import com.spincity.repository.StationRepository;
-import com.spincity.dto.employee.ActiveRideDTO;
 import com.spincity.model.rental.RentalStatus;
 
 import java.time.LocalDateTime;
@@ -53,9 +49,13 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
         Long defectiveCycles = cycleRepository.countDefectiveCyclesByStation(stationId);
         Long availableCycles = cycleRepository.countAvailableCyclesByStation(stationId);
 
+        // ✅ Replace null with actual station name
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found"));
+
         return new EmployeeDashboardDTO(
                 stationId,
-                null,                          // stationName — will add below
+                station.getStationName(),                          // stationName — will add below
                 todayRevenue,
                 todayCustomers,
                 (long) activeRides.size(),
@@ -249,7 +249,55 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
         rentalTransactionRepository.save(transaction);
     }
 
+    @Override
+    public StationAnalyticsDTO getStationAnalytics(Long stationId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime weekAgo = now.minusDays(7);
+        LocalDateTime monthAgo = now.minusDays(30);
 
+        // Revenue
+        double todayRev = paymentRepository.getTodayRevenueByStation(stationId);
+
+        double weeklyRev = rentalTransactionRepository.getWeeklyRevenueByStation(stationId);
+        double monthlyRev = rentalTransactionRepository.getMonthlyRevenueByStation(stationId);
+        // Rider counts
+        long todayCount = rentalTransactionRepository.countTodaysCustomersByStation(stationId);
+        long weeklyCount = rentalTransactionRepository.countRidersByStationAndDateRange(stationId, weekAgo);
+        long monthlyCount = rentalTransactionRepository.countRidersByStationAndDateRange(stationId, monthAgo);
+
+        // Ride history list — last 30 days
+        List<RideHistoryRowDTO> rides = rentalTransactionRepository
+                .findCompletedRidesByStationAndDateRange(stationId, monthAgo)
+                .stream()
+                .map(r -> new RideHistoryRowDTO(
+                        r.getTransactionId(),
+                        r.getCustomer().getCustomerName(),
+                        r.getCustomer().getCustomerPhone(),
+                        r.getCycle().getCycleName(),
+                        r.getPickupStation().getStationName(),
+                        r.getReturnStation() != null ? r.getReturnStation().getStationName() : "—",
+                        r.getRentalStartTime(),
+                        r.getRentalEndTime(),
+                        r.getRentalDuration(),
+                        r.getTotalAmount(),
+                        r.getPaymentStatus(),
+                        r.getDepositStatus(),
+                        r.getRentalStatus().name()
+                ))
+                .collect(Collectors.toList());
+
+        // Add this line to get station name
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new RuntimeException("Station not found"));
+
+        return new StationAnalyticsDTO(
+                stationId,
+                station.getStationName(), // ✅ instead of null
+                todayRev, weeklyRev, monthlyRev,
+                todayCount, weeklyCount, monthlyCount,
+                rides
+        );
+    }
 
     @Override
     public List<ActiveRideDTO> getActiveRides(Integer stationId) {

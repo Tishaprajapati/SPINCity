@@ -50,6 +50,30 @@ public class Cycle {
     @OneToOne(mappedBy = "cycle", cascade = CascadeType.ALL)
     private CyclePerformance performance;
 
+
+    @Column(name = "service_interval_days")
+    private Integer serviceIntervalDays;
+
+    public Integer getServiceIntervalDays() {
+        return serviceIntervalDays;
+    }
+
+    public void setServiceIntervalDays(Integer serviceIntervalDays) {
+        this.serviceIntervalDays = serviceIntervalDays;
+    }
+
+    public LocalDate getNextServiceDate() {
+        return nextServiceDate;
+    }
+
+    public void setNextServiceDate(LocalDate nextServiceDate) {
+        this.nextServiceDate = nextServiceDate;
+    }
+
+    @Column(name = "next_service_date")
+    private LocalDate nextServiceDate;
+
+
     public CycleService getCurrentService() {
         return currentService;
     }

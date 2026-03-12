@@ -17,6 +17,8 @@ public interface CycleRepository extends JpaRepository<Cycle, Long> {
     long countByCurrentStatus(CycleStatus status);
 //    Optional<CyclePerformance> findByCycle_CycleId(Long cycleId);
 
+    List<Cycle> findByCurrentStationIdIn(List<Integer> stationIds);
+
     Long countByCurrentStationId(Long stationId);
 
     @Query("SELECT COUNT(c) FROM Cycle c WHERE c.currentStationId = :stationId " +

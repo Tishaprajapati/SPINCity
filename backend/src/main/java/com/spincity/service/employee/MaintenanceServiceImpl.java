@@ -1,5 +1,6 @@
 package com.spincity.service.employee;
 
+import com.spincity.dto.employee.AssignedCycleDTO;
 import com.spincity.dto.employee.MaintenanceAlertDTO;
 import com.spincity.model.cycle.Cycle;
 import com.spincity.model.cycle.CycleStatus;
@@ -8,6 +9,7 @@ import com.spincity.model.employee.Staff;
 import com.spincity.repository.CycleRepository;
 import com.spincity.repository.CycleServiceRepository;
 import com.spincity.repository.MaintenanceLogRepository;
+import com.spincity.repository.StationRepository;
 import com.spincity.repository.employee.StaffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     private final CycleRepository cycleRepository;
     private final StaffRepository staffRepository;
     private final CycleServiceRepository cycleServiceRepository;
-
+    private final StationRepository stationRepository;
     // ── All Reported Defects ──────────────────────────────────────────────────
 
     @Override
@@ -112,4 +114,81 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         dto.setNextMaintenanceDue(log.getNextMaintenanceDue());
         return dto;
     }
+
+    // Station assignments
+    private List<Integer> getAssignedStations(Long empId) {
+        Staff emp = staffRepository.findById(empId.intValue()) // ✅ already correct
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        String email = emp.getEmail(); // ✅ getEmail() is correct
+        if (email.equals("maint1@spincity.com")) {
+            return List.of(1, 2, 3, 4, 5, 6, 7);
+        } else if (email.equals("maint2@spincity.com")) {
+            return List.of(8, 9, 10, 11, 12, 13, 14);
+        }
+        return List.of();
+    }
+
+    @Override
+    public List<MaintenanceAlertDTO> getDefectsForAssignedStations(Long empId) {
+        List<Integer> stations = getAssignedStations(empId);
+        return stations.stream()
+                .flatMap(stationId ->
+                        maintenanceLogRepository.findPendingReportsByStation((long) stationId)
+                                .stream().map(this::mapToDTO))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AssignedCycleDTO> getCyclesForAssignedStations(Long empId) {
+        List<Integer> stations = getAssignedStations(empId);
+        return cycleRepository.findByCurrentStationIdIn(stations)
+                .stream()
+                .map(c -> new AssignedCycleDTO(
+                        c.getCycleId(),
+                        c.getCycleName(),
+                        c.getCycleType(),
+                        c.getCycleBrand(),
+                        c.getCycleModel(),
+                        c.getCurrentStatus().name(),
+                        c.getCurrentStationId(),
+                        stationRepository.findById(c.getCurrentStationId())  // ✅ ADD THIS
+                                .map(s -> s.getStationName())
+                                .orElse("Station #" + c.getCurrentStationId()),
+                        c.getServiceIntervalDays(),
+                        c.getNextServiceDate(),
+                        c.getNextServiceDate() != null && !c.getNextServiceDate().isAfter(LocalDate.now()),
+                        c.getTotalRides()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setNextServiceDate(Long cycleId, LocalDate date) {
+        Cycle cycle = cycleRepository.findById(cycleId)
+                .orElseThrow(() -> new RuntimeException("Cycle not found"));
+        cycle.setNextServiceDate(date);
+        cycleRepository.save(cycle);
+    }
+
+    @Override
+    public List<MaintenanceAlertDTO> getDueForAssignedStations(Long empId) {
+        List<Integer> stations = getAssignedStations(empId);
+        return cycleRepository.findByCurrentStationIdIn(stations)
+                .stream()
+                .filter(c -> c.getNextServiceDate() != null &&
+                        !c.getNextServiceDate().isAfter(LocalDate.now()))
+                .map(c -> {
+                    MaintenanceAlertDTO dto = new MaintenanceAlertDTO();
+                    dto.setCycleId(c.getCycleId());
+                    dto.setCycleName(c.getCycleName());
+                    dto.setCycleType(c.getCycleType());
+                    dto.setStationId(c.getCurrentStationId() != null ?
+                            c.getCurrentStationId().longValue() : null);
+                    dto.setNextMaintenanceDue(c.getNextServiceDate());
+                    dto.setReportStatus("Due");
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

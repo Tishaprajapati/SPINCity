@@ -18,7 +18,8 @@ public interface CycleServiceRepository extends JpaRepository<CycleService, Inte
 
     // Get all defective cycles at a specific station
     @Query("SELECT cs FROM CycleService cs WHERE cs.cycle.currentStationId = :stationId " +
-            "AND cs.conditionStatus != 'Good'")
+            "AND cs.conditionStatus != 'Good'"+
+            "AND cs.cycle.currentStatus = 'Damaged'")
     List<CycleService> findDefectiveCyclesByStation(@Param("stationId") Long stationId);
 
     // Get cycles whose service is due or overdue

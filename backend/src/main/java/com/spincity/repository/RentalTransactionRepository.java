@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -86,6 +87,39 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
             "AND r.rentalStatus = 'Pending' " +
             "AND r.approvalStatus = 'Approved'")  // ✅ Already approved ride, just ending
     List<RentalTransaction> findRidesEndingAtStation(@Param("stationId") Long stationId);
+
+    // Last 30 days rides for a station
+    @Query("SELECT r FROM RentalTransaction r WHERE " +
+            "r.pickupStation.stationId = :stationId " +
+            "AND r.rentalStartTime >= :fromDate " +
+            "AND r.rentalStatus = 'Completed'")
+    List<RentalTransaction> findCompletedRidesByStationAndDateRange(
+            @Param("stationId") Long stationId,
+            @Param("fromDate") LocalDateTime fromDate
+    );
+
+
+    // Rider count last 7 days
+    @Query("SELECT COUNT(r) FROM RentalTransaction r WHERE " +
+            "r.pickupStation.stationId = :stationId " +
+            "AND r.rentalStartTime >= :fromDate")
+    Long countRidersByStationAndDateRange(
+            @Param("stationId") Long stationId,
+            @Param("fromDate") LocalDateTime fromDate
+    );
+
+    // ✅ Keep only these — uses total_amount from rental_transaction
+    @Query(value = "SELECT COALESCE(SUM(total_amount), 0) FROM rental_transaction " +
+            "WHERE pickup_station_id = :stationId " +
+            "AND rental_status = 'Completed' " +
+            "AND rental_start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)", nativeQuery = true)
+    double getWeeklyRevenueByStation(@Param("stationId") Long stationId);
+
+    @Query(value = "SELECT COALESCE(SUM(total_amount), 0) FROM rental_transaction " +
+            "WHERE pickup_station_id = :stationId " +
+            "AND rental_status = 'Completed' " +
+            "AND rental_start_time >= DATE_SUB(NOW(), INTERVAL 30 DAY)", nativeQuery = true)
+    double getMonthlyRevenueByStation(@Param("stationId") Long stationId);
 
     // Today's riders for BOTH pickup and return station
     @Query("SELECT r FROM RentalTransaction r WHERE " +
