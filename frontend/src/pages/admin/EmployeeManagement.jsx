@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
+// CORRECT:
+import { employeeService, stationService } from '../../service/adminDashboardService';
 import '../../style/admin/employeemanagement.css';
 
 const EmployeeManagement = () => {
+  const [employees, setEmployees] = useState([]);
+  const [stations, setStations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterDesignation, setFilterDesignation] = useState('all');
   const [filterStation, setFilterStation] = useState('all');
@@ -9,179 +16,148 @@ const EmployeeManagement = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showEmployeeDetails, setShowEmployeeDetails] = useState(false);
   const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [showEditEmployee, setShowEditEmployee] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Mock employee data
-  const allEmployees = [
-    {
-      employee_id: 'EMP001',
-      employee_name: 'Rajesh Kumar',
-      employee_contact: '+91 98765 43210',
-      employee_email: 'rajesh.kumar@spincity.com',
-      assigned_station: 'Central Park Station',
-      station_id: 'STN001',
-      designation: 'Station Manager',
-      joining_date: '2024-01-15',
-      salary: 45000,
-      shift_timing: '09:00 AM - 06:00 PM',
-      rating: 4.8,
-      status: 'active',
-      total_tasks: 245,
-      completed_tasks: 232,
-      pending_tasks: 13
-    },
-    {
-      employee_id: 'EMP002',
-      employee_name: 'Priya Patel',
-      employee_contact: '+91 98765 43211',
-      employee_email: 'priya.patel@spincity.com',
-      assigned_station: 'Beach View Station',
-      station_id: 'STN002',
-      designation: 'Station Manager',
-      joining_date: '2024-02-10',
-      salary: 45000,
-      shift_timing: '09:00 AM - 06:00 PM',
-      rating: 4.6,
-      status: 'active',
-      total_tasks: 189,
-      completed_tasks: 178,
-      pending_tasks: 11
-    },
-    {
-      employee_id: 'EMP003',
-      employee_name: 'Amit Sharma',
-      employee_contact: '+91 98765 43212',
-      employee_email: 'amit.sharma@spincity.com',
-      assigned_station: 'Mall Road Station',
-      station_id: 'STN003',
-      designation: 'Station Manager',
-      joining_date: '2023-11-20',
-      salary: 45000,
-      shift_timing: '09:00 AM - 06:00 PM',
-      rating: 4.7,
-      status: 'active',
-      total_tasks: 312,
-      completed_tasks: 298,
-      pending_tasks: 14
-    },
-    {
-      employee_id: 'EMP004',
-      employee_name: 'Sneha Mehta',
-      employee_contact: '+91 98765 43213',
-      employee_email: 'sneha.mehta@spincity.com',
-      assigned_station: 'University Station',
-      station_id: 'STN004',
-      designation: 'Station Manager',
-      joining_date: '2024-03-05',
-      salary: 45000,
-      shift_timing: '09:00 AM - 06:00 PM',
-      rating: 4.5,
-      status: 'on-leave',
-      total_tasks: 156,
-      completed_tasks: 145,
-      pending_tasks: 11
-    },
-    {
-      employee_id: 'EMP005',
-      employee_name: 'Rahul Singh',
-      employee_contact: '+91 98765 43214',
-      employee_email: 'rahul.singh@spincity.com',
-      assigned_station: 'Tech Park Station',
-      station_id: 'STN005',
-      designation: 'Station Manager',
-      joining_date: '2023-08-12',
-      salary: 45000,
-      shift_timing: '09:00 AM - 06:00 PM',
-      rating: 4.9,
-      status: 'active',
-      total_tasks: 423,
-      completed_tasks: 410,
-      pending_tasks: 13
-    },
-    {
-      employee_id: 'EMP006',
-      employee_name: 'Vikram Shah',
-      employee_contact: '+91 98765 43215',
-      employee_email: 'vikram.shah@spincity.com',
-      assigned_station: 'Central Park Station',
-      station_id: 'STN001',
-      designation: 'Maintenance Technician',
-      joining_date: '2024-01-20',
-      salary: 32000,
-      shift_timing: '10:00 AM - 07:00 PM',
-      rating: 4.4,
-      status: 'active',
-      total_tasks: 178,
-      completed_tasks: 165,
-      pending_tasks: 13
-    },
-    {
-      employee_id: 'EMP007',
-      employee_name: 'Kavita Desai',
-      employee_contact: '+91 98765 43216',
-      employee_email: 'kavita.desai@spincity.com',
-      assigned_station: 'Beach View Station',
-      station_id: 'STN002',
-      designation: 'Customer Support',
-      joining_date: '2024-04-01',
-      salary: 28000,
-      shift_timing: '08:00 AM - 05:00 PM',
-      rating: 4.7,
-      status: 'active',
-      total_tasks: 234,
-      completed_tasks: 220,
-      pending_tasks: 14
-    },
-    {
-      employee_id: 'EMP008',
-      employee_name: 'Neha Gupta',
-      employee_contact: '+91 98765 43217',
-      employee_email: 'neha.gupta@spincity.com',
-      assigned_station: 'Mall Road Station',
-      station_id: 'STN003',
-      designation: 'Maintenance Technician',
-      joining_date: '2023-12-10',
-      salary: 32000,
-      shift_timing: '10:00 AM - 07:00 PM',
-      rating: 4.6,
-      status: 'active',
-      total_tasks: 201,
-      completed_tasks: 189,
-      pending_tasks: 12
+  const emptyForm = {
+    name: '', email: '', password: '', phone: '',
+    designation: 'Station Employee', assignedStation: '',
+    role: 'EMPLOYEE', shift: '', salary: '', status: 'Active'
+  };
+  const [addForm, setAddForm] = useState(emptyForm);
+  const [editForm, setEditForm] = useState({});
+
+  // ── Load ───────────────────────────────────────────────────────
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [empData, stationData] = await Promise.all([
+        employeeService.getAll(),
+        stationService.getAll()
+      ]);
+      setEmployees(empData);
+      setStations(stationData);
+    } catch (err) {
+      setError('Failed to load employee data.');
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  // Calculate statistics
-  const stats = {
-    totalEmployees: allEmployees.length,
-    activeEmployees: allEmployees.filter(e => e.status === 'active').length,
-    onLeave: allEmployees.filter(e => e.status === 'on-leave').length,
-    avgRating: (allEmployees.reduce((sum, e) => sum + e.rating, 0) / allEmployees.length).toFixed(1),
-    totalSalary: allEmployees.reduce((sum, e) => sum + e.salary, 0),
-    stationManagers: allEmployees.filter(e => e.designation === 'Station Manager').length,
-    technicians: allEmployees.filter(e => e.designation === 'Maintenance Technician').length,
-    support: allEmployees.filter(e => e.designation === 'Customer Support').length
   };
 
-  // Filter employees
-  const filteredEmployees = allEmployees.filter(employee => {
-    const matchesSearch = employee.employee_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         employee.employee_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         employee.employee_email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDesignation = filterDesignation === 'all' || employee.designation === filterDesignation;
-    const matchesStation = filterStation === 'all' || employee.station_id === filterStation;
-    const matchesStatus = filterStatus === 'all' || employee.status === filterStatus;
-    return matchesSearch && matchesDesignation && matchesStation && matchesStatus;
-  });
+  useEffect(() => { loadData(); }, []);
+
+  // ── Stats ──────────────────────────────────────────────────────
+  const stats = {
+    total: employees.length,
+    active: employees.filter(e => e.status === 'Active' || !e.status).length,
+    designations: [...new Set(employees.map(e => e.designation).filter(Boolean))],
+  };
+
+  // ── Helpers ────────────────────────────────────────────────────
+  const getStationName = (stationId) => {
+    if (!stationId) return 'Unassigned';
+    const s = stations.find(s => s.stationId === stationId || s.stationId === Number(stationId));
+    return s ? s.stationName : `Station ${stationId}`;
+  };
 
   const getStatusColor = (status) => {
-    switch(status) {
-      case 'active': return '#10b981';
-      case 'on-leave': return '#f59e0b';
-      case 'inactive': return '#ef4444';
-      default: return '#6b7280';
+    switch (status) {
+      case 'Active': return '#10b981';
+      case 'On Leave': return '#f59e0b';
+      case 'Inactive': return '#ef4444';
+      default: return '#10b981';
     }
   };
+
+  const getInitials = (name) => (name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+
+  // ── Filter ─────────────────────────────────────────────────────
+  const filtered = employees.filter(e => {
+    const matchSearch = [e.name, e.employeeEmail || e.email, String(e.id)].some(v =>
+      (v || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    const matchDesig = filterDesignation === 'all' || e.designation === filterDesignation;
+    const matchStation = filterStation === 'all' || String(e.assignedStation) === filterStation;
+    const matchStatus = filterStatus === 'all' || (e.status || 'Active') === filterStatus;
+    return matchSearch && matchDesig && matchStation && matchStatus;
+  });
+
+  // ── CRUD ───────────────────────────────────────────────────────
+  const handleAddEmployee = async () => {
+    if (!addForm.name || !addForm.email || !addForm.password) return alert('Name, Email and Password are required');
+    try {
+      setActionLoading(true);
+      await employeeService.add(addForm);
+      setShowAddEmployee(false);
+      setAddForm(emptyForm);
+      await loadData();
+    } catch (err) {
+      alert('Failed to add employee');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEditEmployee = async () => {
+    try {
+      setActionLoading(true);
+      await employeeService.update(selectedEmployee.id, editForm);
+      setShowEditEmployee(false);
+      await loadData();
+    } catch (err) {
+      alert('Failed to update employee');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteEmployee = async (empId) => {
+    if (!window.confirm('Remove this employee? This cannot be undone.')) return;
+    try {
+      await employeeService.delete(empId);
+      await loadData();
+    } catch (err) {
+      alert('Failed to delete employee');
+    }
+  };
+
+  const openEdit = (emp) => {
+    setSelectedEmployee(emp);
+    setEditForm({
+      name: emp.name,
+      phone: emp.phone || '',
+      designation: emp.designation,
+      assignedStation: emp.assignedStation,
+      role: emp.role,
+      shift: emp.shift || '',
+      salary: emp.salary || '',
+      status: emp.status || 'Active',
+      password: '',
+    });
+    setShowEditEmployee(true);
+  };
+
+  // ── UI ─────────────────────────────────────────────────────────
+  if (loading) return (
+    <div className="employee-management">
+      <div className="loading-state">
+        <RefreshCw size={40} className="spin-icon" />
+        <p>Loading employees...</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="employee-management">
+      <div className="error-state">
+        <AlertTriangle size={40} />
+        <p>{error}</p>
+        <button onClick={loadData} className="retry-btn">Retry</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="employee-management">
@@ -189,224 +165,120 @@ const EmployeeManagement = () => {
       <div className="page-header">
         <div className="header-content">
           <div className="header-title-section">
-            <h1 className="page-title">
-              <span className="title-icon">👥</span>
-              Employee Management
-            </h1>
-            <p className="page-subtitle">Manage your workforce and track employee performance</p>
+            <h1 className="page-title"><span className="title-icon">👥</span>Employee Management</h1>
+            <p className="page-subtitle">Manage your workforce across all stations</p>
           </div>
           <div className="header-actions">
             <button className="add-employee-btn" onClick={() => setShowAddEmployee(true)}>
-              <span>➕</span>
-              Add Employee
+              <span>➕</span> Add Employee
             </button>
-            <button className="export-btn">
-              <span>📥</span>
-              Export Data
+            <button className="export-btn" onClick={loadData}>
+              <span>🔄</span> Refresh
             </button>
           </div>
         </div>
-
-        
       </div>
-      {/* Statistics Grid */}
-        <div className="stats-grid">
-          <div className="stat-card total">
-            <div className="stat-icon">👥</div>
-            <div className="stat-content">
-              <span className="stat-label">Total Employees</span>
-              <span className="stat-value">{stats.totalEmployees}</span>
-              <span className="stat-detail">Across all stations</span>
-            </div>
-          </div>
 
-          <div className="stat-card active">
-            <div className="stat-icon">✅</div>
-            <div className="stat-content">
-              <span className="stat-label">Active</span>
-              <span className="stat-value">{stats.activeEmployees}</span>
-              <span className="stat-detail">{Math.round((stats.activeEmployees/stats.totalEmployees)*100)}% workforce</span>
-            </div>
-          </div>
-
-          <div className="stat-card leave">
-            <div className="stat-icon">🏖️</div>
-            <div className="stat-content">
-              <span className="stat-label">On Leave</span>
-              <span className="stat-value">{stats.onLeave}</span>
-              <span className="stat-detail">Currently unavailable</span>
-            </div>
-          </div>
-
-          <div className="stat-card rating">
-            <div className="stat-icon">⭐</div>
-            <div className="stat-content">
-              <span className="stat-label">Avg Rating</span>
-              <span className="stat-value">{stats.avgRating}</span>
-              <span className="stat-detail">Employee performance</span>
-            </div>
-          </div>
-
-          <div className="stat-card salary">
-            <div className="stat-icon">💰</div>
-            <div className="stat-content">
-              <span className="stat-label">Monthly Payroll</span>
-              <span className="stat-value">₹{(stats.totalSalary/1000).toFixed(0)}K</span>
-              <span className="stat-detail">Total expenses</span>
-            </div>
-          </div>
-
-          <div className="stat-card designation">
-            <div className="stat-icon">📊</div>
-            <div className="stat-content">
-              <span className="stat-label">Designations</span>
-              <span className="stat-value">{stats.stationManagers}/{stats.technicians}/{stats.support}</span>
-              <span className="stat-detail">Manager/Tech/Support</span>
-            </div>
+      {/* Stats */}
+      <div className="stats-grid">
+        <div className="stat-card total">
+          <div className="stat-icon">👥</div>
+          <div className="stat-content">
+            <span className="stat-label">Total Employees</span>
+            <span className="stat-value">{stats.total}</span>
+            <span className="stat-detail">Across all stations</span>
           </div>
         </div>
+        <div className="stat-card active">
+          <div className="stat-icon">✅</div>
+          <div className="stat-content">
+            <span className="stat-label">Active</span>
+            <span className="stat-value">{stats.active}</span>
+            <span className="stat-detail">{stats.total ? Math.round((stats.active/stats.total)*100) : 0}% workforce</span>
+          </div>
+        </div>
+        <div className="stat-card designation">
+          <div className="stat-icon">📊</div>
+          <div className="stat-content">
+            <span className="stat-label">Designations</span>
+            <span className="stat-value">{stats.designations.length}</span>
+            <span className="stat-detail">Different roles</span>
+          </div>
+        </div>
+        <div className="stat-card leave">
+          <div className="stat-icon">🏢</div>
+          <div className="stat-content">
+            <span className="stat-label">Stations Covered</span>
+            <span className="stat-value">{stations.length}</span>
+            <span className="stat-detail">Active stations</span>
+          </div>
+        </div>
+      </div>
 
-      {/* Controls Section */}
+      {/* Controls */}
       <div className="controls-section">
         <div className="search-filter-row">
           <div className="search-bar">
             <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search by name, ID, or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <button className="clear-search" onClick={() => setSearchQuery('')}>✕</button>
-            )}
+            <input type="text" placeholder="Search by name, ID, or email..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            {searchQuery && <button className="clear-search" onClick={() => setSearchQuery('')}>✕</button>}
           </div>
-
           <div className="filter-controls">
             <select value={filterDesignation} onChange={(e) => setFilterDesignation(e.target.value)}>
               <option value="all">All Designations</option>
-              <option value="Station Manager">Station Manager</option>
-              <option value="Maintenance Technician">Maintenance Technician</option>
-              <option value="Customer Support">Customer Support</option>
+              {stats.designations.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
-
             <select value={filterStation} onChange={(e) => setFilterStation(e.target.value)}>
               <option value="all">All Stations</option>
-              <option value="STN001">Central Park Station</option>
-              <option value="STN002">Beach View Station</option>
-              <option value="STN003">Mall Road Station</option>
-              <option value="STN004">University Station</option>
-              <option value="STN005">Tech Park Station</option>
+              {stations.map(s => <option key={s.stationId} value={String(s.stationId)}>{s.stationName}</option>)}
             </select>
-
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
               <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="on-leave">On Leave</option>
-              <option value="inactive">Inactive</option>
+              <option value="Active">Active</option>
+              <option value="On Leave">On Leave</option>
+              <option value="Inactive">Inactive</option>
             </select>
-
             <div className="view-toggle">
-              <button 
-                className={viewMode === 'grid' ? 'active' : ''}
-                onClick={() => setViewMode('grid')}
-              >
-                Grid
-              </button>
-              <button 
-                className={viewMode === 'list' ? 'active' : ''}
-                onClick={() => setViewMode('list')}
-              >
-                List
-              </button>
+              <button className={viewMode === 'grid' ? 'active' : ''} onClick={() => setViewMode('grid')}>Grid</button>
+              <button className={viewMode === 'list' ? 'active' : ''} onClick={() => setViewMode('list')}>List</button>
             </div>
           </div>
         </div>
-
-        <div className="results-info">
-          Showing {filteredEmployees.length} of {allEmployees.length} employees
-        </div>
+        <div className="results-info">Showing {filtered.length} of {employees.length} employees</div>
       </div>
 
-      {/* Employees Display */}
+      {/* Grid View */}
       {viewMode === 'grid' ? (
         <div className="employees-grid">
-          {filteredEmployees.map((employee, index) => (
-            <div 
-              key={employee.employee_id} 
-              className="employee-card"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
+          {filtered.map((emp, index) => (
+            <div key={emp.id} className="employee-card" style={{ animationDelay: `${index * 0.05}s` }}>
               <div className="card-header">
-                <div className="employee-avatar">
-                  {employee.employee_name.split(' ').map(n => n[0]).join('')}
-                </div>
-                <span 
-                  className="status-badge"
-                  style={{ backgroundColor: getStatusColor(employee.status) }}
-                >
-                  {employee.status}
+                <div className="employee-avatar">{getInitials(emp.name)}</div>
+                <span className="status-badge" style={{ backgroundColor: getStatusColor(emp.status) }}>
+                  {emp.status || 'Active'}
                 </span>
               </div>
-
               <div className="employee-info">
-                <h3 className="employee-name">{employee.employee_name}</h3>
-                <p className="employee-id">{employee.employee_id}</p>
-                
-                <div className="designation-tag">
-                  <span className="badge">{employee.designation}</span>
-                </div>
-
+                <h3 className="employee-name">{emp.name}</h3>
+                <p className="employee-id">ID: #{emp.id}</p>
+                <div className="designation-tag"><span className="badge">{emp.designation || emp.role}</span></div>
                 <div className="employee-details">
-                  <div className="detail-item">
-                    <span className="detail-icon">📍</span>
-                    <span className="detail-text">{employee.assigned_station}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">📧</span>
-                    <span className="detail-text">{employee.employee_email}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">📞</span>
-                    <span className="detail-text">{employee.employee_contact}</span>
-                  </div>
-                  <div className="detail-item">
-                    <span className="detail-icon">⏰</span>
-                    <span className="detail-text">{employee.shift_timing}</span>
-                  </div>
+                  <div className="detail-item"><span className="detail-icon">📍</span><span className="detail-text">{getStationName(emp.assignedStation)}</span></div>
+                  <div className="detail-item"><span className="detail-icon">📧</span><span className="detail-text">{emp.employeeEmail || emp.email}</span></div>
+                  {emp.phone && <div className="detail-item"><span className="detail-icon">📞</span><span className="detail-text">{emp.phone}</span></div>}
+                  {emp.shift && <div className="detail-item"><span className="detail-icon">⏰</span><span className="detail-text">{emp.shift}</span></div>}
                 </div>
-
-                <div className="employee-metrics">
-                  <div className="metric">
-                    <span className="metric-value">{employee.total_tasks}</span>
-                    <span className="metric-label">Total Tasks</span>
+                {emp.salary && (
+                  <div className="salary-info">
+                    <span className="salary-label">Monthly Salary:</span>
+                    <span className="salary-value">₹{Number(emp.salary).toLocaleString()}</span>
                   </div>
-                  <div className="metric">
-                    <span className="metric-value">{employee.completed_tasks}</span>
-                    <span className="metric-label">Completed</span>
-                  </div>
-                  <div className="metric">
-                    <span className="metric-value">⭐ {employee.rating}</span>
-                    <span className="metric-label">Rating</span>
-                  </div>
-                </div>
-
-                <div className="salary-info">
-                  <span className="salary-label">Monthly Salary:</span>
-                  <span className="salary-value">₹{employee.salary.toLocaleString()}</span>
-                </div>
+                )}
               </div>
-
-              <div className="card-footer">
-                <button 
-                  className="view-details-btn"
-                  onClick={() => {
-                    setSelectedEmployee(employee);
-                    setShowEmployeeDetails(true);
-                  }}
-                >
-                  View Details →
-                </button>
+              <div className="card-footer" style={{ display: 'flex', gap: '6px' }}>
+                <button className="view-details-btn" onClick={() => { setSelectedEmployee(emp); setShowEmployeeDetails(true); }}>View Details →</button>
+                <button className="view-details-btn" style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer' }} onClick={() => openEdit(emp)}>✏️</button>
+                <button className="view-details-btn" style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 10px', cursor: 'pointer' }} onClick={() => handleDeleteEmployee(emp.id)}>🗑️</button>
               </div>
             </div>
           ))}
@@ -416,62 +288,32 @@ const EmployeeManagement = () => {
           <table className="employees-table">
             <thead>
               <tr>
-                <th>Employee</th>
-                <th>Designation</th>
-                <th>Station</th>
-                <th>Contact</th>
-                <th>Shift</th>
-                <th>Rating</th>
-                <th>Salary</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>Employee</th><th>Designation</th><th>Station</th>
+                <th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredEmployees.map((employee) => (
-                <tr key={employee.employee_id}>
+              {filtered.map(emp => (
+                <tr key={emp.id}>
                   <td>
                     <div className="table-employee-info">
-                      <div className="table-avatar">
-                        {employee.employee_name.split(' ').map(n => n[0]).join('')}
-                      </div>
-                      <div>
-                        <strong>{employee.employee_name}</strong>
-                        <span className="table-employee-id">{employee.employee_id}</span>
-                      </div>
+                      <div className="table-avatar">{getInitials(emp.name)}</div>
+                      <div><strong>{emp.name}</strong><span className="table-employee-id">#{emp.id}</span></div>
                     </div>
                   </td>
+                  <td><span className="table-designation-badge">{emp.designation}</span></td>
+                  <td>{getStationName(emp.assignedStation)}</td>
+                  <td><div className="table-contact"><span>{emp.employeeEmail || emp.email}</span></div></td>
+                  <td>{emp.role}</td>
                   <td>
-                    <span className="table-designation-badge">{employee.designation}</span>
-                  </td>
-                  <td>{employee.assigned_station}</td>
-                  <td>
-                    <div className="table-contact">
-                      <span>{employee.employee_contact}</span>
-                      <span className="table-email">{employee.employee_email}</span>
-                    </div>
-                  </td>
-                  <td>{employee.shift_timing}</td>
-                  <td className="rating-cell">⭐ {employee.rating}</td>
-                  <td className="salary-cell">₹{employee.salary.toLocaleString()}</td>
-                  <td>
-                    <span 
-                      className="table-status-badge"
-                      style={{ backgroundColor: getStatusColor(employee.status) }}
-                    >
-                      {employee.status}
+                    <span className="table-status-badge" style={{ backgroundColor: getStatusColor(emp.status) }}>
+                      {emp.status || 'Active'}
                     </span>
                   </td>
                   <td>
-                    <button 
-                      className="table-view-btn"
-                      onClick={() => {
-                        setSelectedEmployee(employee);
-                        setShowEmployeeDetails(true);
-                      }}
-                    >
-                      👁️ View
-                    </button>
+                    <button className="table-view-btn" onClick={() => { setSelectedEmployee(emp); setShowEmployeeDetails(true); }}>👁️ View</button>
+                    <button className="table-view-btn" style={{marginLeft:'4px'}} onClick={() => openEdit(emp)}>✏️ Edit</button>
+                    <button className="table-view-btn" style={{marginLeft:'4px', color:'#ef4444'}} onClick={() => handleDeleteEmployee(emp.id)}>🗑️</button>
                   </td>
                 </tr>
               ))}
@@ -480,187 +322,188 @@ const EmployeeManagement = () => {
         </div>
       )}
 
-      {/* Employee Details Modal */}
+      {filtered.length === 0 && !loading && (
+        <div style={{textAlign:'center', padding:'60px', color:'#6b7280'}}>
+          <p style={{fontSize:'48px'}}>👥</p>
+          <h3>No employees found</h3>
+          <p>Try adjusting your filters</p>
+        </div>
+      )}
+
+      {/* ── Employee Details Modal ── */}
       {showEmployeeDetails && selectedEmployee && (
         <div className="modal-overlay" onClick={() => setShowEmployeeDetails(false)}>
-          <div className="modal-content employee-details-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content employee-details-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowEmployeeDetails(false)}>✕</button>
-            
             <div className="modal-header-employee">
-              <div className="modal-employee-avatar-large">
-                {selectedEmployee.employee_name.split(' ').map(n => n[0]).join('')}
-              </div>
+              <div className="modal-employee-avatar-large">{getInitials(selectedEmployee.name)}</div>
               <div className="modal-employee-title">
-                <h2>{selectedEmployee.employee_name}</h2>
-                <span className="modal-employee-id">{selectedEmployee.employee_id}</span>
-                <span className="modal-designation">{selectedEmployee.designation}</span>
+                <h2>{selectedEmployee.name}</h2>
+                <span className="modal-employee-id">#{selectedEmployee.id}</span>
+                <span className="modal-designation">{selectedEmployee.designation || selectedEmployee.role}</span>
               </div>
-              <span 
-                className="modal-status-badge"
-                style={{ backgroundColor: getStatusColor(selectedEmployee.status) }}
-              >
-                {selectedEmployee.status}
+              <span className="modal-status-badge" style={{ backgroundColor: getStatusColor(selectedEmployee.status) }}>
+                {selectedEmployee.status || 'Active'}
               </span>
             </div>
-
             <div className="modal-body-employee">
               <div className="employee-details-grid">
                 <div className="detail-section">
-                  <h3>👤 Personal Information</h3>
-                  <div className="detail-row">
-                    <span className="detail-label">Employee ID:</span>
-                    <span className="detail-value">{selectedEmployee.employee_id}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Full Name:</span>
-                    <span className="detail-value">{selectedEmployee.employee_name}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Email:</span>
-                    <span className="detail-value">{selectedEmployee.employee_email}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Contact:</span>
-                    <span className="detail-value">{selectedEmployee.employee_contact}</span>
-                  </div>
+                  <h3>👤 Personal</h3>
+                  {[['Full Name', selectedEmployee.name], ['Email', selectedEmployee.employeeEmail || selectedEmployee.email], ['Phone', selectedEmployee.phone || 'N/A']].map(([l,v]) => (
+                    <div className="detail-row" key={l}><span className="detail-label">{l}:</span><span className="detail-value">{v}</span></div>
+                  ))}
                 </div>
-
                 <div className="detail-section">
-                  <h3>💼 Work Details</h3>
-                  <div className="detail-row">
-                    <span className="detail-label">Designation:</span>
-                    <span className="detail-value">{selectedEmployee.designation}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Assigned Station:</span>
-                    <span className="detail-value">{selectedEmployee.assigned_station}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Shift Timing:</span>
-                    <span className="detail-value">{selectedEmployee.shift_timing}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Joining Date:</span>
-                    <span className="detail-value">{selectedEmployee.joining_date}</span>
-                  </div>
+                  <h3>💼 Work</h3>
+                  {[['Designation', selectedEmployee.designation], ['Role', selectedEmployee.role], ['Station', getStationName(selectedEmployee.assignedStation)], ['Shift', selectedEmployee.shift || 'N/A']].map(([l,v]) => (
+                    <div className="detail-row" key={l}><span className="detail-label">{l}:</span><span className="detail-value">{v}</span></div>
+                  ))}
                 </div>
+                {selectedEmployee.salary && (
+                  <div className="detail-section">
+                    <h3>💰 Salary</h3>
+                    <div className="detail-row"><span className="detail-label">Monthly:</span><span className="detail-value salary-highlight">₹{Number(selectedEmployee.salary).toLocaleString()}</span></div>
+                    <div className="detail-row"><span className="detail-label">Annual:</span><span className="detail-value">₹{(Number(selectedEmployee.salary)*12).toLocaleString()}</span></div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="modal-footer-employee">
+              <button className="footer-btn secondary" onClick={() => setShowEmployeeDetails(false)}>Close</button>
+              <button className="footer-btn primary" onClick={() => { setShowEmployeeDetails(false); openEdit(selectedEmployee); }}>✏️ Edit Details</button>
+              <button className="footer-btn action danger" onClick={() => { setShowEmployeeDetails(false); handleDeleteEmployee(selectedEmployee.id); }}>🗑️ Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-                <div className="detail-section">
-                  <h3>📊 Performance</h3>
-                  <div className="detail-row">
-                    <span className="detail-label">Total Tasks:</span>
-                    <span className="detail-value">{selectedEmployee.total_tasks}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Completed:</span>
-                    <span className="detail-value completed-text">{selectedEmployee.completed_tasks}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Pending:</span>
-                    <span className="detail-value pending-text">{selectedEmployee.pending_tasks}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Rating:</span>
-                    <span className="detail-value">⭐ {selectedEmployee.rating}</span>
-                  </div>
+      {/* ── Add Employee Modal ── */}
+      {showAddEmployee && (
+        <div className="modal-overlay" onClick={() => setShowAddEmployee(false)}>
+          <div className="modal-content add-employee-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowAddEmployee(false)}>✕</button>
+            <div className="modal-header-simple"><h2>Add New Employee</h2></div>
+            <div className="modal-body-form">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" placeholder="John Doe" value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})} />
                 </div>
-
-                <div className="detail-section">
-                  <h3>💰 Salary Information</h3>
-                  <div className="detail-row">
-                    <span className="detail-label">Monthly Salary:</span>
-                    <span className="detail-value salary-highlight">₹{selectedEmployee.salary.toLocaleString()}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Annual Package:</span>
-                    <span className="detail-value">₹{(selectedEmployee.salary * 12).toLocaleString()}</span>
-                  </div>
+                <div className="form-group">
+                  <label>Email Address *</label>
+                  <input type="email" placeholder="emp@spincity.com" value={addForm.email} onChange={e => setAddForm({...addForm, email: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>Password *</label>
+                  <input type="password" placeholder="Set initial password" value={addForm.password} onChange={e => setAddForm({...addForm, password: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input type="tel" placeholder="+91 XXXXX XXXXX" value={addForm.phone} onChange={e => setAddForm({...addForm, phone: e.target.value})} />
+                </div>
+                <div className="form-group">
+                  <label>Designation</label>
+                  <select value={addForm.designation} onChange={e => setAddForm({...addForm, designation: e.target.value})}>
+                    <option value="Station Employee">Station Employee</option>
+                    <option value="Cycle Maintenance">Cycle Maintenance</option>
+                    <option value="Station Manager">Station Manager</option>
+                    <option value="Customer Support">Customer Support</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Role</label>
+                  <select value={addForm.role} onChange={e => setAddForm({...addForm, role: e.target.value})}>
+                    <option value="EMPLOYEE">EMPLOYEE</option>
+                    <option value="STAFF">STAFF</option>
+                    <option value="ADMIN">ADMIN</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Assigned Station</label>
+                  <select value={addForm.assignedStation} onChange={e => setAddForm({...addForm, assignedStation: e.target.value})}>
+                    <option value="">Select Station</option>
+                    {stations.map(s => <option key={s.stationId} value={s.stationId}>{s.stationName}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Monthly Salary</label>
+                  <input type="number" placeholder="35000" value={addForm.salary} onChange={e => setAddForm({...addForm, salary: e.target.value})} />
+                </div>
+                <div className="form-group full-width">
+                  <label>Shift Timing</label>
+                  <input type="text" placeholder="09:00 AM - 06:00 PM" value={addForm.shift} onChange={e => setAddForm({...addForm, shift: e.target.value})} />
                 </div>
               </div>
             </div>
-
-            <div className="modal-footer-employee">
-              <button className="footer-btn secondary" onClick={() => setShowEmployeeDetails(false)}>
-                Close
-              </button>
-              <button className="footer-btn primary">
-                ✏️ Edit Details
-              </button>
-              <button className="footer-btn action">
-                📋 View Tasks
+            <div className="modal-footer-simple">
+              <button className="footer-btn secondary" onClick={() => setShowAddEmployee(false)}>Cancel</button>
+              <button className="footer-btn primary" onClick={handleAddEmployee} disabled={actionLoading}>
+                {actionLoading ? 'Adding...' : '➕ Add Employee'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Add Employee Modal */}
-      {showAddEmployee && (
-        <div className="modal-overlay" onClick={() => setShowAddEmployee(false)}>
-          <div className="modal-content add-employee-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowAddEmployee(false)}>✕</button>
-            
-            <div className="modal-header-simple">
-              <h2>Add New Employee</h2>
-            </div>
-
+      {/* ── Edit Employee Modal ── */}
+      {showEditEmployee && selectedEmployee && (
+        <div className="modal-overlay" onClick={() => setShowEditEmployee(false)}>
+          <div className="modal-content add-employee-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowEditEmployee(false)}>✕</button>
+            <div className="modal-header-simple"><h2>Edit Employee — {selectedEmployee.name}</h2></div>
             <div className="modal-body-form">
               <div className="form-grid">
                 <div className="form-group">
                   <label>Full Name</label>
-                  <input type="text" placeholder="Enter employee name" />
+                  <input type="text" value={editForm.name || ''} onChange={e => setEditForm({...editForm, name: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label>Employee ID</label>
-                  <input type="text" placeholder="Auto-generated" disabled />
-                </div>
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <input type="email" placeholder="employee@spincity.com" />
-                </div>
-                <div className="form-group">
-                  <label>Contact Number</label>
-                  <input type="tel" placeholder="+91 XXXXX XXXXX" />
+                  <label>Phone</label>
+                  <input type="tel" value={editForm.phone || ''} onChange={e => setEditForm({...editForm, phone: e.target.value})} />
                 </div>
                 <div className="form-group">
                   <label>Designation</label>
-                  <select>
-                    <option>Station Manager</option>
-                    <option>Maintenance Technician</option>
-                    <option>Customer Support</option>
+                  <select value={editForm.designation || ''} onChange={e => setEditForm({...editForm, designation: e.target.value})}>
+                    <option value="Station Employee">Station Employee</option>
+                    <option value="Cycle Maintenance">Cycle Maintenance</option>
+                    <option value="Station Manager">Station Manager</option>
+                    <option value="Customer Support">Customer Support</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <label>Assigned Station</label>
-                  <select>
-                    <option>Central Park Station</option>
-                    <option>Beach View Station</option>
-                    <option>Mall Road Station</option>
-                    <option>University Station</option>
-                    <option>Tech Park Station</option>
+                  <select value={String(editForm.assignedStation) || ''} onChange={e => setEditForm({...editForm, assignedStation: e.target.value})}>
+                    <option value="">Unassigned</option>
+                    {stations.map(s => <option key={s.stationId} value={s.stationId}>{s.stationName}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Monthly Salary</label>
-                  <input type="number" placeholder="Enter salary amount" />
+                  <label>Shift Timing</label>
+                  <input type="text" value={editForm.shift || ''} onChange={e => setEditForm({...editForm, shift: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label>Joining Date</label>
-                  <input type="date" />
+                  <label>Salary</label>
+                  <input type="number" value={editForm.salary || ''} onChange={e => setEditForm({...editForm, salary: e.target.value})} />
                 </div>
-                <div className="form-group full-width">
-                  <label>Shift Timing</label>
-                  <input type="text" placeholder="e.g., 09:00 AM - 06:00 PM" />
+                <div className="form-group">
+                  <label>Status</label>
+                  <select value={editForm.status || 'Active'} onChange={e => setEditForm({...editForm, status: e.target.value})}>
+                    <option value="Active">Active</option>
+                    <option value="On Leave">On Leave</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>New Password (leave blank to keep)</label>
+                  <input type="password" placeholder="••••••••" value={editForm.password || ''} onChange={e => setEditForm({...editForm, password: e.target.value})} />
                 </div>
               </div>
             </div>
-
             <div className="modal-footer-simple">
-              <button className="footer-btn secondary" onClick={() => setShowAddEmployee(false)}>
-                Cancel
-              </button>
-              <button className="footer-btn primary">
-                ➕ Add Employee
+              <button className="footer-btn secondary" onClick={() => setShowEditEmployee(false)}>Cancel</button>
+              <button className="footer-btn primary" onClick={handleEditEmployee} disabled={actionLoading}>
+                {actionLoading ? 'Saving...' : '✅ Save Changes'}
               </button>
             </div>
           </div>

@@ -325,8 +325,17 @@ const UserDashboard = () => {
       </div>
     );
 
+    const capitalizeName = (name) => {
+  if (!name) return "";
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
   const user = {
-    name: dashboardData.name,
+    name: capitalizeName(dashboardData.name),
     email: dashboardData.email,
     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(dashboardData.name)}&background=2d5a3d&color=ffffff&size=128`,
     memberSince: dashboardData.memberSince,

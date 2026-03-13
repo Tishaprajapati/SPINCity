@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import adminDashboardService from '../../services/adminDashboardService';
-import '../../style/admin/admindashboard2.css';
-import AdminNavbar from './AdminNavbar';
+import React, { useState, useEffect } from "react";
+import adminDashboardService from "../../service/adminDashboardService";
+import {
+  cycleService,
+  stationService,
+} from "../../service/adminDashboardService";
+import "../../style/admin/admindashboard.css";
+import AdminNavbar from "./AdminNavbar";
 
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [dashboardData, setDashboardData] = useState(null);
   const [recentRentals, setRecentRentals] = useState([]);
+  const [cycles, setCycles] = useState([]);
+  const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
@@ -25,66 +31,80 @@ const AdminDashboard = () => {
       setLoading(true);
       setError(null);
 
-      const summary = await adminDashboardService.getDashboardSummary();
+      const [summary, rentals, cyclesData, stationsData] = await Promise.all([
+        adminDashboardService.getDashboardSummary(),
+        adminDashboardService.getRecentRentals(),
+        cycleService.getAll(),
+        stationService.getAll(),
+      ]);
+
       setDashboardData(summary);
-
-      const rentals = await adminDashboardService.getRecentRentals();
-      setRecentRentals(rentals);
-
+      setRecentRentals(
+        Array.isArray(rentals)
+          ? rentals
+          : rentals.content || rentals.data || [],
+      );
+      setCycles(
+        Array.isArray(cyclesData)
+          ? cyclesData
+          : cyclesData.content || cyclesData.data || [],
+      );
+      setStations(
+        Array.isArray(stationsData)
+          ? stationsData
+          : stationsData.content || stationsData.data || [],
+      );
     } catch (err) {
-      console.error('Error loading dashboard:', err);
-      setError('Failed to load dashboard data. Please try again.');
+      console.error("Error loading dashboard:", err);
+      setError("Failed to load dashboard data. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true 
+  const formatTime = (date) =>
+    date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
     });
-  };
-
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+  const formatDate = (date) =>
+    date.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
-  };
 
   const formatRentalTime = (dateTimeString) => {
-    if (!dateTimeString) return 'N/A';
-    const date = new Date(dateTimeString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true 
+    if (!dateTimeString) return "N/A";
+    return new Date(dateTimeString).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const calculateDuration = (startTime, endTime) => {
-    if (!startTime) return 'N/A';
-    
-    const start = new Date(startTime);
-    const end = endTime ? new Date(endTime) : new Date();
-    
-    const diffMs = end - start;
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
-    return `${diffHours}h ${diffMinutes}m`;
+    if (!startTime) return "N/A";
+    const diffMs =
+      (endTime ? new Date(endTime) : new Date()) - new Date(startTime);
+    const h = Math.floor(diffMs / (1000 * 60 * 60));
+    const m = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${h}h ${m}m`;
   };
 
   if (loading) {
     return (
       <div className="admin-layout">
-        <AdminNavbar isCollapsed={isNavCollapsed} setIsCollapsed={setIsNavCollapsed} />
-        <div className={`admin-dashboard-content ${isNavCollapsed ? 'navbar-collapsed' : ''}`}>
+        <AdminNavbar
+          isCollapsed={isNavCollapsed}
+          setIsCollapsed={setIsNavCollapsed}
+        />
+        <div
+          className={`admin-dashboard-content ${isNavCollapsed ? "navbar-collapsed" : ""}`}
+        >
           <div className="loading-state">
             <div className="loading-spinner">Loading Dashboard...</div>
           </div>
@@ -96,8 +116,13 @@ const AdminDashboard = () => {
   if (error) {
     return (
       <div className="admin-layout">
-        <AdminNavbar isCollapsed={isNavCollapsed} setIsCollapsed={setIsNavCollapsed} />
-        <div className={`admin-dashboard-content ${isNavCollapsed ? 'navbar-collapsed' : ''}`}>
+        <AdminNavbar
+          isCollapsed={isNavCollapsed}
+          setIsCollapsed={setIsNavCollapsed}
+        />
+        <div
+          className={`admin-dashboard-content ${isNavCollapsed ? "navbar-collapsed" : ""}`}
+        >
           <div className="error-state">
             <div className="error-message">
               <p>{error}</p>
@@ -109,112 +134,122 @@ const AdminDashboard = () => {
     );
   }
 
-  const stats = [
-    { 
-      id: 1, 
-      title: 'Total Customers', 
-      value: dashboardData?.totalCustomers?.toLocaleString() || '0', 
-      change: '+12%', 
-      changeType: 'positive',
-      icon: '👥',
-      color: 'blue'
-    },
-    { 
-      id: 2, 
-      title: 'Active Cycles', 
-      value: dashboardData?.activeCycles?.toLocaleString() || '0', 
-      change: '+8%', 
-      changeType: 'positive',
-      icon: '🚴',
-      color: 'green'
-    },
-    { 
-      id: 3, 
-      title: "Today's Revenue", 
-      value: `₹${dashboardData?.todayRevenue?.toLocaleString() || '0'}`, 
-      change: '+23%', 
-      changeType: 'positive',
-      icon: '💰',
-      color: 'purple'
-    },
-    { 
-      id: 4, 
-      title: 'Active Stations', 
-      value: dashboardData?.activeStations?.toLocaleString() || '0', 
-      change: `+${dashboardData?.activeStations || 0}`, 
-      changeType: 'positive',
-      icon: '📍',
-      color: 'orange'
-    },
-  ];
+  // ── Real cycle status counts ───────────────────────────────────
+  const availableCount = cycles.filter(
+    (c) => c.currentStatus === "Available",
+  ).length;
+  const rentedCount = cycles.filter((c) => c.currentStatus === "Rented").length;
+  const maintenanceCount = cycles.filter(
+    (c) => c.currentStatus === "Under_Maintenance",
+  ).length;
+  const damagedCount = cycles.filter(
+    (c) => c.currentStatus === "Damaged",
+  ).length;
+  const totalCycles = cycles.length;
 
-  const alerts = [
-    { id: 1, type: 'critical', message: 'Low cycle availability - Only 5 cycles left', time: '10 mins ago' },
-    { id: 2, type: 'warning', message: 'Cycle #CP123 reported damaged by customer', time: '25 mins ago' },
-    { id: 3, type: 'info', message: 'Inventory restock scheduled for tomorrow', time: '1 hour ago' },
-  ];
-
-  const topStations = [
-    { station: 'CG Road', rentals: 145, revenue: 8450, rating: 4.8, trend: 'up' },
-    { station: 'Vastrapur', rentals: 128, revenue: 7200, rating: 4.6, trend: 'up' },
-    { station: 'Maninagar', rentals: 112, revenue: 6890, rating: 4.7, trend: 'down' },
-    { station: 'Satellite', rentals: 98, revenue: 5640, rating: 4.5, trend: 'up' },
-  ];
+  const pct = (n) =>
+    totalCycles > 0 ? Math.round((n / totalCycles) * 100) : 0;
 
   const cycleOverview = [
-    { 
-      status: 'Available', 
-      count: dashboardData?.activeCycles || 0, 
-      total: (dashboardData?.activeCycles || 0) + (dashboardData?.inactiveCycles || 0), 
-      percentage: dashboardData?.activeCycles && dashboardData?.inactiveCycles 
-        ? Math.round((dashboardData.activeCycles / (dashboardData.activeCycles + dashboardData.inactiveCycles)) * 100)
-        : 0,
-      color: '#10b981' 
+    {
+      status: "Available",
+      count: availableCount,
+      percentage: pct(availableCount),
+      color: "#10b981",
     },
-    { 
-      status: 'Rented', 
-      count: 15, 
-      total: 50, 
-      percentage: 30, 
-      color: '#6366f1' 
+    {
+      status: "Rented",
+      count: rentedCount,
+      percentage: pct(rentedCount),
+      color: "#6366f1",
     },
-    { 
-      status: 'Maintenance', 
-      count: dashboardData?.inactiveCycles || 0, 
-      total: (dashboardData?.activeCycles || 0) + (dashboardData?.inactiveCycles || 0),
-      percentage: dashboardData?.activeCycles && dashboardData?.inactiveCycles 
-        ? Math.round((dashboardData.inactiveCycles / (dashboardData.activeCycles + dashboardData.inactiveCycles)) * 100)
-        : 0,
-      color: '#f59e0b' 
+    {
+      status: "Maintenance",
+      count: maintenanceCount,
+      percentage: pct(maintenanceCount),
+      color: "#f59e0b",
+    },
+    {
+      status: "Damaged",
+      count: damagedCount,
+      percentage: pct(damagedCount),
+      color: "#ef4444",
+    },
+  ];
+
+  // ── Real top stations (by availableCycles as proxy) ───────────
+  const topStations = [...stations]
+    .sort((a, b) => (b.availableCycles || 0) - (a.availableCycles || 0))
+    .slice(0, 5)
+    .map((s) => ({
+      station: s.stationName,
+      available: s.availableCycles || 0,
+      capacity: s.totalCapacity || 0,
+      status: s.status,
+      type: s.stationType || "Standard",
+    }));
+
+  // ── Stats cards ────────────────────────────────────────────────
+  const stats = [
+    {
+      id: 1,
+      title: "Total Customers",
+      value: dashboardData?.totalCustomers?.toLocaleString() || "0",
+      icon: "👥",
+      color: "blue",
+    },
+    {
+      id: 2,
+      title: "Total Cycles",
+      value: totalCycles.toLocaleString(),
+      icon: "🚴",
+      color: "green",
+    },
+    {
+      id: 3,
+      title: "Today's Revenue",
+      value: `₹${dashboardData?.todayRevenue?.toLocaleString() || "0"}`,
+      icon: "💰",
+      color: "purple",
+    },
+    {
+      id: 4,
+      title: "Active Stations",
+      value: dashboardData?.activeStations?.toLocaleString() || "0",
+      icon: "📍",
+      color: "orange",
     },
   ];
 
   return (
     <div className="admin-layout">
-      <AdminNavbar isCollapsed={isNavCollapsed} setIsCollapsed={setIsNavCollapsed} />
-      
-      <div className={`admin-dashboard-content ${isNavCollapsed ? 'navbar-collapsed' : ''}`}>
+      <AdminNavbar
+        isCollapsed={isNavCollapsed}
+        setIsCollapsed={setIsNavCollapsed}
+      />
+
+      <div
+        className={`admin-dashboard-content ${isNavCollapsed ? "navbar-collapsed" : ""}`}
+      >
         {/* Header */}
         <div className="dashboard-header">
           <div className="admin-profile">
             <div className="admin-avatar">A</div>
             <div className="admin-info">
-              <h1 className="welcome-text">Welcome, <span className="admin-name">Admin</span></h1>
+              <h1 className="welcome-text">
+                Welcome, <span className="admin-name">Admin</span>
+              </h1>
               <p className="admin-role">System Administrator</p>
             </div>
           </div>
-
           <div className="header-info-cards">
             <div className="info-card">
               <div className="info-icon">🏢</div>
               <div className="info-content">
                 <p className="info-label">TOTAL STATIONS</p>
-                <h3 className="info-value">
-                  {dashboardData?.activeStations || 0} Active
-                </h3>
+                <h3 className="info-value">{stations.length} Active</h3>
               </div>
             </div>
-
             <div className="info-card">
               <div className="info-icon">⏰</div>
               <div className="info-content">
@@ -236,7 +271,6 @@ const AdminDashboard = () => {
                 <p className="stat-title">{stat.title}</p>
                 <div className="stat-bottom">
                   <h2 className="stat-value">{stat.value}</h2>
-                  <span className={`stat-change ${stat.changeType}`}>{stat.change}</span>
                 </div>
               </div>
             </div>
@@ -245,23 +279,24 @@ const AdminDashboard = () => {
 
         {/* Main Content Grid */}
         <div className="content-grid">
+          {/* Recent Rentals */}
           <div className="content-card recent-rentals">
             <div className="card-header">
               <div className="card-title">
                 <span className="card-icon">📊</span>
                 <h2>Recent Rentals</h2>
               </div>
-              <button className="view-all-btn">
-                View All <span className="arrow">→</span>
+              <button className="view-all-btn" onClick={fetchDashboardData}>
+                Refresh <span className="arrow">🔄</span>
               </button>
             </div>
-
             <div className="rentals-table">
               <div className="table-header">
                 <span>CUSTOMER</span>
                 <span>CYCLE</span>
-                <span>START TIME</span>
+                <span>STATION</span>
                 <span>DURATION</span>
+                <span>AMOUNT</span>
                 <span>STATUS</span>
               </div>
               {recentRentals.length > 0 ? (
@@ -269,11 +304,16 @@ const AdminDashboard = () => {
                   <div key={rental.rentalId} className="table-row">
                     <span className="customer-name">{rental.customerName}</span>
                     <span className="cycle-id">{rental.cycleName}</span>
-                    <span className="start-time">{formatRentalTime(rental.startTime)}</span>
+                    <span className="cycle-id">{rental.pickupStation}</span>
                     <span className="duration">
                       {calculateDuration(rental.startTime, rental.endTime)}
                     </span>
-                    <span className={`status-badge ${rental.status.toLowerCase()}`}>
+                    <span className="duration">
+                      ₹{rental.amount?.toFixed(0) || "0"}
+                    </span>
+                    <span
+                      className={`status-badge ${rental.status?.toLowerCase()}`}
+                    >
                       {rental.status}
                     </span>
                   </div>
@@ -284,22 +324,41 @@ const AdminDashboard = () => {
             </div>
           </div>
 
+          {/* Cycle Status Overview (replacing alerts) */}
           <div className="content-card alerts-card">
             <div className="card-header">
               <div className="card-title">
-                <span className="card-icon">🔔</span>
-                <h2>Alerts & Notifications</h2>
+                <span className="card-icon">🚲</span>
+                <h2>Cycle Status Overview</h2>
               </div>
-              <span className="alert-count">{alerts.length}</span>
+              <span className="alert-count">{totalCycles} total</span>
             </div>
-
-            <div className="alerts-list">
-              {alerts.map((alert) => (
-                <div key={alert.id} className={`alert-item alert-${alert.type}`}>
-                  <div className="alert-indicator"></div>
-                  <div className="alert-content">
-                    <p className="alert-message">{alert.message}</p>
-                    <span className="alert-time">{alert.time}</span>
+            <div className="cycle-stats" style={{ padding: "8px 0" }}>
+              {cycleOverview.map((item, index) => (
+                <div
+                  key={index}
+                  className="cycle-stat-item"
+                  style={{ marginBottom: "16px" }}
+                >
+                  <div className="cycle-stat-header">
+                    <div
+                      className="cycle-stat-color"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className="cycle-stat-label">{item.status}</span>
+                    <span className="cycle-stat-count">{item.count}</span>
+                    <span className="cycle-stat-percentage">
+                      {item.percentage}%
+                    </span>
+                  </div>
+                  <div className="cycle-stat-bar">
+                    <div
+                      className="cycle-stat-fill"
+                      style={{
+                        width: `${item.percentage}%`,
+                        backgroundColor: item.color,
+                      }}
+                    ></div>
                   </div>
                 </div>
               ))}
@@ -309,20 +368,21 @@ const AdminDashboard = () => {
 
         {/* Bottom Section */}
         <div className="bottom-grid">
+          {/* Top Stations — real data */}
           <div className="content-card stations-card">
             <div className="card-header">
               <div className="card-title">
                 <span className="card-icon">🏆</span>
-                <h2>Top Performing Stations</h2>
+                <h2>Stations Overview</h2>
               </div>
             </div>
-
             <div className="stations-table">
               <div className="table-header">
                 <span>STATION</span>
-                <span>RENTALS</span>
-                <span>REVENUE</span>
-                <span>RATING</span>
+                <span>TYPE</span>
+                <span>AVAILABLE</span>
+                <span>CAPACITY</span>
+                <span>STATUS</span>
               </div>
               {topStations.map((station, index) => (
                 <div key={index} className="table-row">
@@ -330,36 +390,85 @@ const AdminDashboard = () => {
                     <span className="station-rank">#{index + 1}</span>
                     {station.station}
                   </span>
-                  <span className="rentals-count">{station.rentals}</span>
-                  <span className="revenue-amount">₹{station.revenue.toLocaleString()}</span>
-                  <span className="rating-badge">⭐ {station.rating}</span>
+                  <span className="rentals-count">{station.type}</span>
+                  <span
+                    className="revenue-amount"
+                    style={{ color: "#10b981", fontWeight: 600 }}
+                  >
+                    {station.available}
+                  </span>
+                  <span className="rentals-count">{station.capacity}</span>
+                  <span
+                    className={`status-badge ${station.status?.toLowerCase()}`}
+                  >
+                    {station.status}
+                  </span>
                 </div>
               ))}
+              {topStations.length === 0 && (
+                <div className="no-data">No stations found</div>
+              )}
             </div>
           </div>
 
+          {/* Quick Actions + Summary */}
           <div className="content-card cycle-overview">
             <div className="card-header">
               <div className="card-title">
-                <span className="card-icon">🚲</span>
-                <h2>Cycle Status Overview</h2>
+                <span className="card-icon">⚡</span>
+                <h2>Quick Summary</h2>
               </div>
             </div>
 
-            <div className="cycle-stats">
-              {cycleOverview.map((item, index) => (
-                <div key={index} className="cycle-stat-item">
-                  <div className="cycle-stat-header">
-                    <div className="cycle-stat-color" style={{ backgroundColor: item.color }}></div>
-                    <span className="cycle-stat-label">{item.status}</span>
-                    <span className="cycle-stat-count">{item.count}</span>
-                    <span className="cycle-stat-percentage">{item.percentage}%</span>
+            {/* Summary numbers */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "12px",
+                marginBottom: "20px",
+              }}
+            >
+              {[
+                {
+                  label: "Available Cycles",
+                  value: availableCount,
+                  color: "#10b981",
+                },
+                { label: "Rented Now", value: rentedCount, color: "#6366f1" },
+                {
+                  label: "In Maintenance",
+                  value: maintenanceCount,
+                  color: "#f59e0b",
+                },
+                { label: "Damaged", value: damagedCount, color: "#ef4444" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  style={{
+                    background: "#f8fafc",
+                    borderRadius: "10px",
+                    padding: "14px",
+                    borderLeft: `4px solid ${item.color}`,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "22px",
+                      fontWeight: 700,
+                      color: item.color,
+                    }}
+                  >
+                    {item.value}
                   </div>
-                  <div className="cycle-stat-bar">
-                    <div 
-                      className="cycle-stat-fill" 
-                      style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
-                    ></div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {item.label}
                   </div>
                 </div>
               ))}
@@ -369,20 +478,16 @@ const AdminDashboard = () => {
               <h3>Quick Actions</h3>
               <div className="action-buttons">
                 <button className="action-btn">
-                  <span>🚴</span>
-                  Check-in Cycle
+                  <span>🚴</span>Fleet Management
                 </button>
                 <button className="action-btn">
-                  <span>🔧</span>
-                  Log Maintenance
+                  <span>🔧</span>Maintenance
                 </button>
                 <button className="action-btn">
-                  <span>📦</span>
-                  Update Inventory
+                  <span>📍</span>Stations
                 </button>
                 <button className="action-btn">
-                  <span>🔄</span>
-                  Redistribute
+                  <span>👥</span>Employees
                 </button>
               </div>
             </div>

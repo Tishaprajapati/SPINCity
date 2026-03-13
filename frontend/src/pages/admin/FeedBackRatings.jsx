@@ -1,499 +1,251 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Search, Filter, Download, Eye, CheckCircle, XCircle, Clock, TrendingUp, MessageSquare, AlertCircle, ChevronDown, Calendar, User, MapPin, Bike } from 'lucide-react';
-import '../../style/admin/feedbackratings.css';
+import axiosInstance from '../../config/axiosConfig';
+import '../../style/admin/FeedBackRatings.css';
+import AdminNavbar from './AdminNavbar';
 
-const FeedbackRatings = () => {
+
+const FeedBackRatings = () => {
   const [feedbacks, setFeedbacks] = useState([]);
-  const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filterRating, setFilterRating] = useState('all');
-  const [filterIssueType, setFilterIssueType] = useState('all');
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    resolved: 0,
-    avgRating: 0,
-    critical: 0
-  });
+  const [sortBy, setSortBy] = useState('newest');
+  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
-  // Mock data generation
-  useEffect(() => {
-    const issueTypes = ['Cycle Quality', 'Station Issue', 'Payment Problem', 'App Experience', 'Customer Service', 'Other'];
-    const statuses = ['Pending', 'In Progress', 'Resolved', 'Closed'];
-    const names = ['Raj Kumar', 'Priya Sharma', 'Amit Patel', 'Sneha Reddy', 'Vikram Singh', 'Anjali Gupta'];
-    const stations = ['Central Park', 'MG Road', 'Railway Station', 'Tech Park', 'City Mall', 'University Gate'];
-    const comments = [
-      'Great service, very convenient for daily commute.',
-      'The cycle had some brake issues, needs maintenance.',
-      'Payment was deducted twice for the same ride.',
-      'App is very user-friendly and easy to navigate.',
-      'Station was overcrowded, could not find a cycle.',
-      'Excellent initiative for the city, keep it up!',
-      'The cycle seat was uncomfortable for long rides.',
-      'Quick customer support response, issue resolved fast.'
-    ];
+  useEffect(() => { loadData(); }, []);
 
-    const mockFeedbacks = Array.from({ length: 50 }, (_, i) => ({
-      feedback_id: `FB${String(i + 1).padStart(4, '0')}`,
-      customer_id: `CUST${String(Math.floor(Math.random() * 1000)).padStart(4, '0')}`,
-      customer_name: names[Math.floor(Math.random() * names.length)],
-      transaction_id: `TXN${String(Math.floor(Math.random() * 10000)).padStart(5, '0')}`,
-      cycle_id: `CYC${String(Math.floor(Math.random() * 500)).padStart(3, '0')}`,
-      station_id: `STN${String(Math.floor(Math.random() * 20)).padStart(2, '0')}`,
-      station_name: stations[Math.floor(Math.random() * stations.length)],
-      rating: Math.floor(Math.random() * 5) + 1,
-      comments: comments[Math.floor(Math.random() * comments.length)],
-      feedback_date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      issue_type: issueTypes[Math.floor(Math.random() * issueTypes.length)],
-      resolution_status: statuses[Math.floor(Math.random() * statuses.length)],
-      priority: Math.random() > 0.7 ? 'High' : Math.random() > 0.4 ? 'Medium' : 'Low'
-    }));
-
-    setFeedbacks(mockFeedbacks);
-    setFilteredFeedbacks(mockFeedbacks);
-    
-    // Calculate stats
-    const pending = mockFeedbacks.filter(f => f.resolution_status === 'Pending').length;
-    const resolved = mockFeedbacks.filter(f => f.resolution_status === 'Resolved').length;
-    const avgRating = (mockFeedbacks.reduce((acc, f) => acc + f.rating, 0) / mockFeedbacks.length).toFixed(1);
-    const critical = mockFeedbacks.filter(f => f.priority === 'High' && f.resolution_status !== 'Resolved').length;
-
-    setStats({
-      total: mockFeedbacks.length,
-      pending,
-      resolved,
-      avgRating,
-      critical
-    });
-  }, []);
-
-  // Filter logic
-  useEffect(() => {
-    let filtered = feedbacks;
-
-    if (searchTerm) {
-      filtered = filtered.filter(f => 
-        f.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        f.feedback_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        f.comments.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [feedbackRes, summaryRes] = await Promise.all([
+        axiosInstance.get('/admin/feedback'),
+        axiosInstance.get('/admin/feedback/summary'),
+      ]);
+      setFeedbacks(Array.isArray(feedbackRes.data) ? feedbackRes.data : []);
+      setSummary(summaryRes.data);
+    } catch (err) {
+      setError('Failed to load feedback data.');
+    } finally {
+      setLoading(false);
     }
-
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(f => f.resolution_status === filterStatus);
-    }
-
-    if (filterRating !== 'all') {
-      filtered = filtered.filter(f => f.rating === parseInt(filterRating));
-    }
-
-    if (filterIssueType !== 'all') {
-      filtered = filtered.filter(f => f.issue_type === filterIssueType);
-    }
-
-    if (dateRange.start && dateRange.end) {
-      filtered = filtered.filter(f => {
-        const feedbackDate = new Date(f.feedback_date);
-        return feedbackDate >= new Date(dateRange.start) && feedbackDate <= new Date(dateRange.end);
-      });
-    }
-
-    setFilteredFeedbacks(filtered);
-  }, [searchTerm, filterStatus, filterRating, filterIssueType, dateRange, feedbacks]);
-
-  const exportToCSV = () => {
-    const headers = ['Feedback ID', 'Customer Name', 'Rating', 'Issue Type', 'Status', 'Date', 'Comments'];
-    const rows = filteredFeedbacks.map(f => [
-      f.feedback_id,
-      f.customer_name,
-      f.rating,
-      f.issue_type,
-      f.resolution_status,
-      new Date(f.feedback_date).toLocaleDateString(),
-      f.comments
-    ]);
-    
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'feedback_ratings.csv';
-    a.click();
   };
 
-  return (
-    <div className="feedback-container">
-      <div className="feedback-content">
-        {/* Header */}
-        <div className="header">
-          <h1 className="main-title">
-            <MessageSquare className="title-icon" size={40} />
-            Feedback & Ratings Management
-          </h1>
-          <p className="subtitle">Monitor and manage customer feedback for SPINCity services</p>
-        </div>
+  // ── Filter & Sort ──────────────────────────────────────────────
+  const filtered = feedbacks
+    .filter(f => {
+      const matchSearch = (f.customerName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (f.comments || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const matchRating = filterRating === 'all' || String(f.rating) === filterRating;
+      return matchSearch && matchRating;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.feedbackDate) - new Date(a.feedbackDate);
+      if (sortBy === 'oldest') return new Date(a.feedbackDate) - new Date(b.feedbackDate);
+      if (sortBy === 'highest') return b.rating - a.rating;
+      if (sortBy === 'lowest')  return a.rating - b.rating;
+      return 0;
+    });
 
-        {/* Stats Cards */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-content">
-              <div className="stat-info">
-                <p className="stat-label">Total Feedback</p>
-                <p className="stat-value">{stats.total}</p>
-              </div>
-              <MessageSquare className="stat-icon stat-icon-primary" size={32} />
-            </div>
-          </div>
+  const renderStars = (rating, size = 'normal') => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span key={i} className={`star ${i < rating ? 'star-filled' : 'star-empty'} star-${size}`}>★</span>
+    ));
+  };
 
-          <div className="stat-card">
-            <div className="stat-content">
-              <div className="stat-info">
-                <p className="stat-label">Pending</p>
-                <p className="stat-value stat-value-warning">{stats.pending}</p>
-              </div>
-              <Clock className="stat-icon stat-icon-warning" size={32} />
-            </div>
-          </div>
+  const getRatingColor = (rating) => {
+    if (rating >= 4) return '#10b981';
+    if (rating === 3) return '#f59e0b';
+    return '#ef4444';
+  };
 
-          <div className="stat-card">
-            <div className="stat-content">
-              <div className="stat-info">
-                <p className="stat-label">Resolved</p>
-                <p className="stat-value stat-value-success">{stats.resolved}</p>
-              </div>
-              <CheckCircle className="stat-icon stat-icon-success" size={32} />
-            </div>
-          </div>
+  const formatDate = (iso) => {
+    if (!iso) return 'N/A';
+    return new Date(iso).toLocaleDateString('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    });
+  };
 
-          <div className="stat-card">
-            <div className="stat-content">
-              <div className="stat-info">
-                <p className="stat-label">Avg Rating</p>
-                <p className="stat-value stat-value-primary">{stats.avgRating}</p>
-              </div>
-              <Star className="stat-icon stat-icon-rating" size={32} />
-            </div>
-          </div>
+  const getRatingLabel = (rating) => {
+    switch(rating) {
+      case 5: return 'Excellent';
+      case 4: return 'Good';
+      case 3: return 'Average';
+      case 2: return 'Poor';
+      case 1: return 'Terrible';
+      default: return '';
+    }
+  };
 
-          <div className="stat-card">
-            <div className="stat-content">
-              <div className="stat-info">
-                <p className="stat-label">Critical Issues</p>
-                <p className="stat-value stat-value-danger">{stats.critical}</p>
-              </div>
-              <AlertCircle className="stat-icon stat-icon-danger" size={32} />
-            </div>
-          </div>
-        </div>
+  if (loading) return (
+    <div className="feedback-page">
+      <div className="fb-loading">Loading feedback data...</div>
+    </div>
+  );
 
-        {/* Filters and Search */}
-        <div className="filter-section">
-          <div className="filter-controls">
-            <div className="search-box">
-              <Search className="search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Search by customer, feedback ID, or comments..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
-            </div>
-
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="filter-btn"
-            >
-              <Filter size={18} />
-              Filters
-              <ChevronDown className={showFilters ? 'chevron-rotate' : ''} size={16} />
-            </button>
-
-            <button onClick={exportToCSV} className="export-btn">
-              <Download size={18} />
-              Export CSV
-            </button>
-          </div>
-
-          {showFilters && (
-            <div className="filter-dropdown">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Closed">Closed</option>
-              </select>
-
-              <select
-                value={filterRating}
-                onChange={(e) => setFilterRating(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Ratings</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-              </select>
-
-              <select
-                value={filterIssueType}
-                onChange={(e) => setFilterIssueType(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Issue Types</option>
-                <option value="Cycle Quality">Cycle Quality</option>
-                <option value="Station Issue">Station Issue</option>
-                <option value="Payment Problem">Payment Problem</option>
-                <option value="App Experience">App Experience</option>
-                <option value="Customer Service">Customer Service</option>
-                <option value="Other">Other</option>
-              </select>
-
-              <input
-                type="date"
-                value={dateRange.start}
-                onChange={(e) => setDateRange({...dateRange, start: e.target.value})}
-                className="filter-select"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Feedback Table */}
-        <div className="table-container">
-          <div className="table-wrapper">
-            <table className="feedback-table">
-              <thead>
-                <tr>
-                  <th>Feedback ID</th>
-                  <th>Customer</th>
-                  <th>Rating</th>
-                  <th>Issue Type</th>
-                  <th>Station</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredFeedbacks.map((feedback) => (
-                  <tr key={feedback.feedback_id} className="table-row">
-                    <td>
-                      <span className="feedback-id">{feedback.feedback_id}</span>
-                    </td>
-                    <td>
-                      <div className="customer-info">
-                        <User size={16} className="customer-icon" />
-                        <div>
-                          <p className="customer-name">{feedback.customer_name}</p>
-                          <p className="customer-id">{feedback.customer_id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="rating-stars">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={16}
-                            className={i < feedback.rating ? `star-filled rating-${feedback.rating}` : 'star-empty'}
-                          />
-                        ))}
-                        <span className={`rating-value rating-${feedback.rating}`}>
-                          {feedback.rating}.0
-                        </span>
-                      </div>
-                    </td>
-                    <td className="issue-type">{feedback.issue_type}</td>
-                    <td>
-                      <div className="station-info">
-                        <MapPin size={14} className="station-icon" />
-                        <span>{feedback.station_name}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={`badge priority-${feedback.priority.toLowerCase()}`}>
-                        {feedback.priority}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`badge status-${feedback.resolution_status.toLowerCase().replace(' ', '-')}`}>
-                        {feedback.resolution_status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="date-info">
-                        <Calendar size={14} className="date-icon" />
-                        <span>{new Date(feedback.feedback_date).toLocaleDateString('en-IN')}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => setSelectedFeedback(feedback)}
-                        className="action-btn"
-                        title="View Details"
-                      >
-                        <Eye size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredFeedbacks.length === 0 && (
-            <div className="no-data">
-              <MessageSquare size={48} className="no-data-icon" />
-              <p>No feedback found matching your criteria</p>
-            </div>
-          )}
-        </div>
-
-        {/* Detailed View Modal */}
-        {selectedFeedback && (
-          <div className="modal-overlay" onClick={() => setSelectedFeedback(null)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <div className="modal-title-section">
-                  <h2 className="modal-title">Feedback Details</h2>
-                  <p className="modal-feedback-id">{selectedFeedback.feedback_id}</p>
-                </div>
-                <button onClick={() => setSelectedFeedback(null)} className="modal-close">
-                  <XCircle size={24} />
-                </button>
-              </div>
-
-              <div className="modal-body">
-                {/* Customer Info */}
-                <div className="detail-section">
-                  <h3 className="detail-title">
-                    <User size={18} />
-                    Customer Information
-                  </h3>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <p className="detail-label">Name</p>
-                      <p className="detail-value">{selectedFeedback.customer_name}</p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Customer ID</p>
-                      <p className="detail-value detail-mono">{selectedFeedback.customer_id}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Transaction Info */}
-                <div className="detail-section">
-                  <h3 className="detail-title">
-                    <Bike size={18} />
-                    Transaction Details
-                  </h3>
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <p className="detail-label">Transaction ID</p>
-                      <p className="detail-value detail-mono">{selectedFeedback.transaction_id}</p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Cycle ID</p>
-                      <p className="detail-value detail-mono">{selectedFeedback.cycle_id}</p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Station</p>
-                      <p className="detail-value">{selectedFeedback.station_name}</p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Station ID</p>
-                      <p className="detail-value detail-mono">{selectedFeedback.station_id}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Rating & Status */}
-                <div className="detail-grid-2">
-                  <div className="detail-section detail-rating">
-                    <p className="detail-label">Rating</p>
-                    <div className="rating-display">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={24}
-                          className={i < selectedFeedback.rating ? `star-filled rating-${selectedFeedback.rating}` : 'star-empty'}
-                        />
-                      ))}
-                      <span className={`rating-number rating-${selectedFeedback.rating}`}>
-                        {selectedFeedback.rating}.0
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="detail-section detail-status">
-                    <p className="detail-label">Status & Priority</p>
-                    <div className="badge-group">
-                      <span className={`badge status-${selectedFeedback.resolution_status.toLowerCase().replace(' ', '-')}`}>
-                        {selectedFeedback.resolution_status}
-                      </span>
-                      <span className={`badge priority-${selectedFeedback.priority.toLowerCase()}`}>
-                        {selectedFeedback.priority} Priority
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Issue Type & Date */}
-                <div className="detail-grid-2">
-                  <div className="detail-item">
-                    <p className="detail-label">Issue Type</p>
-                    <p className="detail-value-box">{selectedFeedback.issue_type}</p>
-                  </div>
-                  <div className="detail-item">
-                    <p className="detail-label">Feedback Date</p>
-                    <p className="detail-value-box">
-                      {new Date(selectedFeedback.feedback_date).toLocaleString('en-IN')}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Comments */}
-                <div className="detail-section">
-                  <h3 className="detail-title">
-                    <MessageSquare size={18} />
-                    Customer Comments
-                  </h3>
-                  <p className="comment-box">{selectedFeedback.comments}</p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="action-buttons">
-                  <button className="action-btn-primary action-btn-success">
-                    <CheckCircle size={18} />
-                    Mark as Resolved
-                  </button>
-                  <button className="action-btn-primary action-btn-info">
-                    <TrendingUp size={18} />
-                    Assign Priority
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+  if (error) return (
+    <div className="feedback-page">
+      <div className="fb-error">
+        <p>{error}</p>
+        <button onClick={loadData}>Retry</button>
       </div>
     </div>
   );
+
+  return (
+     <div className="fb-fleet-page">
+    <AdminNavbar isCollapsed={isNavCollapsed} setIsCollapsed={setIsNavCollapsed} />
+    <div className={`feedback-page ${isNavCollapsed ? 'navbar-collapsed' : ''}`}></div>
+    <div className="feedback-page">
+      {/* Header */}
+      <div className="fb-header">
+        <div className="fb-header-title">
+          <span className="fb-header-icon">⭐</span>
+          <div>
+            <h1>Feedback & Ratings</h1>
+            <p>Customer feedback and satisfaction overview</p>
+          </div>
+        </div>
+        <button className="fb-refresh-btn" onClick={loadData}>🔄 Refresh</button>
+      </div>
+
+      {/* Summary Cards */}
+      {summary && (
+        <div className="fb-summary-grid">
+          <div className="fb-summary-card fb-summary-main">
+            <div className="fb-big-rating">{summary.averageRating}</div>
+            <div className="fb-big-stars">{renderStars(Math.round(summary.averageRating), 'large')}</div>
+            <div className="fb-big-label">Average Rating</div>
+            <div className="fb-big-total">{summary.totalFeedbacks} reviews total</div>
+          </div>
+
+          <div className="fb-summary-card fb-rating-breakdown">
+            <h3>Rating Breakdown</h3>
+            {[5,4,3,2,1].map(star => {
+              const count = summary[`${['zero','one','two','three','four','five'][star]}StarCount`] ||
+                            (star === 5 ? summary.fiveStarCount :
+                             star === 4 ? summary.fourStarCount :
+                             star === 3 ? summary.threeStarCount :
+                             star === 2 ? summary.twoStarCount :
+                             summary.oneStarCount) || 0;
+              const pct = summary.totalFeedbacks > 0 ? Math.round((count / summary.totalFeedbacks) * 100) : 0;
+              return (
+                <div key={star} className="fb-bar-row">
+                  <span className="fb-bar-label">{star}★</span>
+                  <div className="fb-bar-track">
+                    <div className="fb-bar-fill" style={{
+                      width: `${pct}%`,
+                      backgroundColor: getRatingColor(star)
+                    }}></div>
+                  </div>
+                  <span className="fb-bar-count">{count}</span>
+                  <span className="fb-bar-pct">{pct}%</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="fb-summary-stats">
+            {[
+              { label: 'Total Reviews',   value: summary.totalFeedbacks,  icon: '📝', color: '#6366f1' },
+              { label: '5 Star Reviews',  value: summary.fiveStarCount,   icon: '🌟', color: '#10b981' },
+              { label: '4 Star Reviews',  value: summary.fourStarCount,   icon: '⭐', color: '#3b82f6' },
+              { label: 'Needs Attention', value: (summary.oneStarCount || 0) + (summary.twoStarCount || 0), icon: '⚠️', color: '#ef4444' },
+            ].map(s => (
+              <div key={s.label} className="fb-mini-stat" style={{ borderLeftColor: s.color }}>
+                <span className="fb-mini-icon">{s.icon}</span>
+                <div>
+                  <div className="fb-mini-value" style={{ color: s.color }}>{s.value}</div>
+                  <div className="fb-mini-label">{s.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Controls */}
+      <div className="fb-controls">
+        <div className="fb-search">
+          <span>🔍</span>
+          <input
+            type="text"
+            placeholder="Search by customer name or comment..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && <button onClick={() => setSearchQuery('')}>✕</button>}
+        </div>
+        <div className="fb-filters">
+          <select value={filterRating} onChange={e => setFilterRating(e.target.value)}>
+            <option value="all">All Ratings</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+          <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="highest">Highest Rating</option>
+            <option value="lowest">Lowest Rating</option>
+          </select>
+        </div>
+        <div className="fb-results-info">Showing {filtered.length} of {feedbacks.length} reviews</div>
+      </div>
+
+      {/* Feedback List */}
+      {filtered.length === 0 ? (
+        <div className="fb-empty">
+          <p style={{ fontSize: '48px' }}>⭐</p>
+          <h3>No feedback found</h3>
+          <p>Try adjusting your filters</p>
+        </div>
+      ) : (
+        <div className="fb-list">
+          {filtered.map(f => (
+            <div key={f.feedbackId} className="fb-card">
+              <div className="fb-card-left">
+                <div className="fb-avatar">{(f.customerName || '?')[0].toUpperCase()}</div>
+              </div>
+              <div className="fb-card-body">
+                <div className="fb-card-top">
+                  <div>
+                    <span className="fb-customer-name">{f.customerName || 'Unknown'}</span>
+                    <span className="fb-customer-id">ID #{f.customerId}</span>
+                  </div>
+                  <div className="fb-card-meta">
+                    <span className="fb-date">📅 {formatDate(f.feedbackDate)}</span>
+                    <span className="fb-feedback-id">#{f.feedbackId}</span>
+                  </div>
+                </div>
+                <div className="fb-card-rating">
+                  <div className="fb-stars">{renderStars(f.rating)}</div>
+                  <span className="fb-rating-badge" style={{ backgroundColor: getRatingColor(f.rating) }}>
+                    {f.rating}/5 — {getRatingLabel(f.rating)}
+                  </span>
+                </div>
+                {f.comments && (
+                  <div className="fb-comment">
+                    <span className="fb-comment-icon">💬</span>
+                    <p>{f.comments}</p>
+                  </div>
+                )}
+                {!f.comments && (
+                  <div className="fb-no-comment">No written comment</div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+    </div>
+    
+  );
 };
 
-export default FeedbackRatings;
+export default FeedBackRatings;
