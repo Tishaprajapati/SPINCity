@@ -70,4 +70,33 @@ public class AdminDashboardSummaryDTO {
 
     private double todayRevenue;
 
+    private double weeklyRevenue;
+
+    public double getWeeklyRevenue() {
+        return weeklyRevenue;
+    }
+
+    public void setWeeklyRevenue(double weeklyRevenue) {
+        this.weeklyRevenue = weeklyRevenue;
+    }
+
+    public double getMonthlyRevenue() {
+        return monthlyRevenue;
+    }
+
+    public void setMonthlyRevenue(double monthlyRevenue) {
+        this.monthlyRevenue = monthlyRevenue;
+    }
+
+    public long getTotalRides() {
+        return totalRides;
+    }
+
+    public void setTotalRides(long totalRides) {
+        this.totalRides = totalRides;
+    }
+
+    private double monthlyRevenue;
+    private long totalRides;
+
 }

@@ -77,9 +77,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/stations/**")
                         .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
 
-
+                                .requestMatchers("/api/admin/customers/**").hasRole("ADMIN")
 //                        .requestMatchers("/api/employee/ride-status/**").permitAll()
-                        // ✅ Everything else needs auth
+                                .requestMatchers("/api/admin/feedback/**").hasRole("ADMIN")
+                                // ✅ Everything else needs auth
                         .anyRequest().authenticated()
                 )
 

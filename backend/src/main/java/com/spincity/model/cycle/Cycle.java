@@ -3,7 +3,7 @@ package com.spincity.model.cycle;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "cycle")
 public class Cycle {
@@ -12,6 +12,7 @@ public class Cycle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cycle_id")
     private Long cycleId;
+
 
     @Column(name = "cycle_name")
     private String cycleName;
@@ -84,6 +85,7 @@ public class Cycle {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_service_id")
+    @JsonIgnore
     private CycleService currentService;
 
 
