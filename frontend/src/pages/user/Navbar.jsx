@@ -17,7 +17,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container">
-        <a className="navbar-brand" href="#home">
+       <Link className="navbar-brand" to="/userdashboard">
           <div className="home-logo-container">
             <span className="home-logo-spin">SPIN</span>
             <span className="home-logo-city">City</span>
@@ -25,7 +25,7 @@ const Navbar = () => {
               Sustainable Personal Innovation Network
             </div>
           </div>
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -62,7 +62,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link btn-custom" to="/signup">
+              <Link className="nav-link btn-custom" to="/login">
                 Logout
               </Link>
             </li>{" "}

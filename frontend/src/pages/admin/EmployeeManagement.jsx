@@ -3,6 +3,7 @@ import { RefreshCw, AlertTriangle } from 'lucide-react';
 // CORRECT:
 import { employeeService, stationService } from '../../service/adminDashboardService';
 import '../../style/admin/employeemanagement.css';
+import AdminNavbar from './AdminNavbar';
 
 const EmployeeManagement = () => {
   const [employees, setEmployees] = useState([]);
@@ -19,6 +20,7 @@ const EmployeeManagement = () => {
   const [showEditEmployee, setShowEditEmployee] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [actionLoading, setActionLoading] = useState(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
   const emptyForm = {
     name: '', email: '', password: '', phone: '',
@@ -160,6 +162,11 @@ const EmployeeManagement = () => {
   );
 
   return (
+     <div className="cycle-fleet-page">
+          <AdminNavbar isCollapsed={isNavCollapsed} setIsCollapsed={setIsNavCollapsed} />
+    
+          <div className={`cycle-fleet-management ${isNavCollapsed ? 'navbar-collapsed' : ''}`}>
+    
     <div className="employee-management">
       {/* Header */}
       <div className="page-header">
@@ -509,6 +516,8 @@ const EmployeeManagement = () => {
           </div>
         </div>
       )}
+    </div>
+    </div>
     </div>
   );
 };

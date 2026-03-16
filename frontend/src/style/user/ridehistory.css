@@ -27,7 +27,7 @@
 .rh-hero {
   position: relative;
   background: linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #1a2a4a 100%);
-  padding: 100px 40px 60px;
+  padding: 120px 40px 60px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -583,6 +583,130 @@
   font-weight: 400;
   color: var(--rh-muted);
 }
+
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+.ud-footer {
+  background: var(--stone-900);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 80px 40px 0;
+}
+
+.ud-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 60px;
+}
+
+.ud-footer-logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.ud-footer-tagline {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 28px;
+  max-width: 280px;
+}
+
+.ud-footer-socials { display: flex; gap: 10px; }
+
+.ud-footer-social {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: all 0.3s var(--ease-spring);
+}
+
+/* Social hover — purple gradient matching navbar */
+.ud-footer-social:hover {
+  background: var(--purple-grad);
+  border-color: transparent;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
+
+.ud-footer-social svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.ud-footer-col-title {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.ud-footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ud-footer-links a {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 400;
+}
+
+.ud-footer-links a:hover { color: white; }
+
+.ud-footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.ud-footer-copy {
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+}
+
+.ud-footer-copy span {
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+}
+
+.ud-footer-legal { display: flex; gap: 24px; }
+
+.ud-footer-legal a {
+  font-size: 12px;
+  color: rgba(255,255,255,0.28);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ud-footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
 
 /* ── Responsive ── */
 @media (max-width: 640px) {

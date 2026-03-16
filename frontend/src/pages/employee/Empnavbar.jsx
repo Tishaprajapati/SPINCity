@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../../style/employee/empnavbar.css';
-
+import logout from '../../service/logout';
 const Icons = {
   Dashboard:   () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
   Approve:     () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>,
@@ -26,15 +26,7 @@ const STATION_NAV = [
 
   { label: 'Station Analytics', path: '/station-analytics', icon: 'Revenue' },
 
-  { label: 'Cycles', icon: 'Cycle', sub: [
-    { label: 'Cycle Status',  path: '/employee/cycles',        icon: 'Cycle'  },
-    { label: 'Report Defect', path: '/employee/report-defect', icon: 'Wrench' },
-  ]},
-  { label: 'Customers', icon: 'Customer', sub: [
-    { label: 'Search Customer', path: '/employee/customers', icon: 'Customer' },
-  ]},
-  { label: 'Deposits', path: '/employee/deposits', icon: 'Deposit' },
-  { label: 'Revenue',  path: '/employee/revenue',  icon: 'Revenue'  },
+ 
 ];
 
 const MAINTENANCE_NAV = [
@@ -180,7 +172,7 @@ const EmpNavbar = ({ onCollapse }) => {
           {!collapsed && <span className="enav-footer-id">ID: EMP-{empId}</span>}
           <button
             className="enav-logout"
-            onClick={() => { localStorage.clear(); navigate('/login'); }}
+            onClick={logout}
             title="Logout"
           >
             <span className="enav-item-icon"><Icons.Logout /></span>

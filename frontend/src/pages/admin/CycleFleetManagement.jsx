@@ -36,6 +36,38 @@ const CycleFleetManagement = () => {
   const [editForm, setEditForm] = useState({});
   const [transferStationId, setTransferStationId] = useState('');
 
+ const getCycleImage = (cycleType) => {
+  const images = {
+    // Gear
+    'Gear':      '/uploads/cycles/gear.png',
+    'gear':      '/uploads/cycles/gear.png',
+    '1':         '/uploads/cycles/gear.png',
+    // Non-Gear
+    'Non-Gear':  '/uploads/cycles/nongear.png',
+    'non-gear':  '/uploads/cycles/nongear.png',
+    'NonGear':   '/uploads/cycles/nongear.png',
+    '2':         '/uploads/cycles/nongear.png',
+    // Kids
+    'Kids':      '/uploads/cycles/kids.png',
+    'kids':      '/uploads/cycles/kids.png',
+    '3':         '/uploads/cycles/kids.png',
+    // Women
+    'Women':     '/uploads/cycles/woman.png',
+    'women':     '/uploads/cycles/woman.png',
+    'Woman':     '/uploads/cycles/woman.png',
+    '4':         '/uploads/cycles/woman.png',
+    // City
+    'City':      '/uploads/cycles/city.png',
+    'city':      '/uploads/cycles/city.png',
+    '5':         '/uploads/cycles/city.png',
+    // Electric
+    'Electric':  '/uploads/cycles/electric.jpg',
+    'electric':  '/uploads/cycles/electric.jpg',
+    '6':         '/uploads/cycles/electric.jpg',
+  };
+  return `http://localhost:8080${images[cycleType] || '/uploads/cycles/nongear.png'}`;
+};
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -317,8 +349,17 @@ const CycleFleetManagement = () => {
                         {getStatusIcon(cycle.currentStatus)} {formatStatus(cycle.currentStatus)}
                       </span>
                     </div>
-                    <div className="cycle-image-placeholder"><Bike size={36} /></div>
-                    <div className="cycle-info">
+<div className="cycle-image-placeholder">
+  <img
+    src={getCycleImage(cycle.cycleType)}
+    alt={cycle.cycleType}
+    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+  />
+  <div style={{ display: 'none', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+    <Bike size={36} />
+  </div>
+</div>                    <div className="cycle-info">
                       <h3 className="cycle-name">{cycle.cycleName || 'Unnamed Cycle'}</h3>
                       <div className="cycle-tags">
                         <span className="tag type">{cycle.cycleType}</span>

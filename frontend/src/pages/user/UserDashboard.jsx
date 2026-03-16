@@ -4,7 +4,7 @@ import userService from "../../service/userService.js";
 import Navbar from "./Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import heroImage from "../../assets/images/yourHeroImage.png";
-
+import SafetyTips from "./SafetyTips.jsx";
 // ── Both uploaded images ──
 import aboutImg1 from "../../assets/images/cyclists.png"; // 1772px wide — group at riverfront
 import aboutImg2 from "../../assets/images/bridge.png"; // 2048×1592 — couple at Atal Bridge
@@ -325,14 +325,14 @@ const UserDashboard = () => {
       </div>
     );
 
-    const capitalizeName = (name) => {
-  if (!name) return "";
-  return name
-    .toLowerCase()
-    .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+  const capitalizeName = (name) => {
+    if (!name) return "";
+    return name
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   const user = {
     name: capitalizeName(dashboardData.name),
@@ -899,7 +899,13 @@ const UserDashboard = () => {
               rentals across the city.
             </p>
             <div className="ud-footer-socials">
-              <a href="#" className="ud-footer-social" aria-label="Instagram">
+              <a
+                href="https://www.instagram.com/kirtida.prajapati"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="Instagram"
+              >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -917,17 +923,14 @@ const UserDashboard = () => {
                   />
                 </svg>
               </a>
-              <a href="#" className="ud-footer-social" aria-label="Twitter">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                >
-                  <path d="M4 4l16 16M4 20L20 4" />
-                </svg>
-              </a>
-              <a href="#" className="ud-footer-social" aria-label="Facebook">
+
+              <a
+                href="https://www.facebook.com/share/1CDsdiRmbZ/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="Facebook"
+              >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -937,7 +940,13 @@ const UserDashboard = () => {
                   <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
                 </svg>
               </a>
-              <a href="#" className="ud-footer-social" aria-label="WhatsApp">
+              <a
+                href="https://wa.me/919429766948"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="WhatsApp"
+              >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -955,22 +964,22 @@ const UserDashboard = () => {
             <p className="ud-footer-col-title">Explore</p>
             <ul className="ud-footer-links">
               <li>
-                <Link to="/user/rent">Rent a Cycle</Link>
+                <Link to="/rentcycle">Rent a Cycle</Link>
               </li>
               <li>
-                <Link to="/user/plans">Membership Plans</Link>
+                <Link to="/userprofile">Membership Plans</Link>
               </li>
               <li>
-                <Link to="/user/history">Ride History</Link>
+                <Link to="/ridehistory">Ride History</Link>
               </li>
               <li>
-                <Link to="/user/profile">My Profile</Link>
+                <Link to="/userprofile">My Profile</Link>
               </li>
             </ul>
           </div>
 
           {/* Company */}
-          <div className="ud-footer-col">
+          {/* <div className="ud-footer-col">
             <p className="ud-footer-col-title">Company</p>
             <ul className="ud-footer-links">
               <li>
@@ -986,7 +995,7 @@ const UserDashboard = () => {
                 <a href="#">Blog</a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Support — Reach Us → /contact */}
           <div className="ud-footer-col">
@@ -996,13 +1005,15 @@ const UserDashboard = () => {
                 <Link to="/contact">Reach Us</Link>
               </li>
               <li>
-                <a href="#">FAQ</a>
+                <Link to="/FAQ">FAQ</Link>
               </li>
               <li>
-                <a href="#">Station Map</a>
+                <a href="https://www.google.com/maps/place/Shaligram+3+Bungalows,+Thaltej,+Ahmedabad,+Gujarat+380059/@23.0467778,72.5013693,17z/data=!3m1!4b1!4m6!3m5!1s0x395e9b5c684f905f:0x39c1401a9dbcdbd2!8m2!3d23.0467778!4d72.5013693!16s%2Fg%2F11h04mcv1?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D">
+                  Station Map
+                </a>
               </li>
               <li>
-                <a href="#">Safety Tips</a>
+                <Link to="/safety">Safety Tips</Link>
               </li>
             </ul>
           </div>

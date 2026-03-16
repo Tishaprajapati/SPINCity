@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import userService from "../../service/userService";
 import "../../style/user/ridehistory.css";
-
+import { Link } from "react-router-dom";
 const RideHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -316,6 +316,151 @@ const RideHistory = () => {
           </div>
         )}
       </div>
+      
+         {/* ══════════ FOOTER ══════════ */}
+      <footer className="ud-footer">
+        <div className="ud-footer-inner">
+          {/* Brand */}
+          <div className="ud-footer-brand">
+            <div className="ud-footer-logo">SpinCity 🚴</div>
+            <p className="ud-footer-tagline">
+              Ahmedabad's smartest way to move. Sustainable, affordable cycle
+              rentals across the city.
+            </p>
+            <div className="ud-footer-socials">
+              <a
+                href="https://www.instagram.com/kirtida.prajapati"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="Instagram"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle
+                    cx="17.5"
+                    cy="6.5"
+                    r="1"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="https://www.facebook.com/share/1CDsdiRmbZ/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="Facebook"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/919429766948"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ud-footer-social"
+                aria-label="WhatsApp"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Explore */}
+          <div className="ud-footer-col">
+            <p className="ud-footer-col-title">Explore</p>
+            <ul className="ud-footer-links">
+              <li>
+                <Link to="/rentcycle">Rent a Cycle</Link>
+              </li>
+              <li>
+                <Link to="/userprofile">Membership Plans</Link>
+              </li>
+              <li>
+                <Link to="/ridehistory">Ride History</Link>
+              </li>
+              <li>
+                <Link to="/userprofile">My Profile</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          {/* <div className="ud-footer-col">
+            <p className="ud-footer-col-title">Company</p>
+            <ul className="ud-footer-links">
+              <li>
+                <a href="#about">About Us</a>
+              </li>
+              <li>
+                <a href="#">Careers</a>
+              </li>
+              <li>
+                <a href="#">Press</a>
+              </li>
+              <li>
+                <a href="#">Blog</a>
+              </li>
+            </ul>
+          </div> */}
+
+          {/* Support — Reach Us → /contact */}
+          <div className="ud-footer-col">
+            <p className="ud-footer-col-title">Support</p>
+            <ul className="ud-footer-links">
+              <li>
+                <Link to="/contact">Reach Us</Link>
+              </li>
+              <li>
+                <Link to="/FAQ">FAQ</Link>
+              </li>
+              <li>
+                <a href="https://www.google.com/maps/place/Shaligram+3+Bungalows,+Thaltej,+Ahmedabad,+Gujarat+380059/@23.0467778,72.5013693,17z/data=!3m1!4b1!4m6!3m5!1s0x395e9b5c684f905f:0x39c1401a9dbcdbd2!8m2!3d23.0467778!4d72.5013693!16s%2Fg%2F11h04mcv1?entry=ttu&g_ep=EgoyMDI2MDMxMS4wIKXMDSoASAFQAw%3D%3D">
+                  Station Map
+                </a>
+              </li>
+              <li>
+                <Link to="/safety">Safety Tips</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="ud-footer-bottom">
+          <p className="ud-footer-copy">
+            © {new Date().getFullYear()} <span>SpinCity</span>. Built with ♥ in
+            Ahmedabad.
+          </p>
+          <div className="ud-footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Cookie Policy</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

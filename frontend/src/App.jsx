@@ -29,7 +29,9 @@ import RideStatusBar from "./pages/user/Ridestatusbar";
 import RideHistory from "./pages/user/Ridehistory";
 import StationAnalytics from "./pages/employee/Stationanalytics";
 import MaintenanceDashboard from './pages/employee/MaintenanceDashboard';
-
+import { AdminRoute, EmployeeRoute, CustomerRoute } from "./componants/ProtectedRoute";
+import FAQ from "./pages/user/FAQ";
+import SafetyTips from "./pages/user/SafetyTips";
 // ✅ Layout that wraps only USER pages
 const UserLayout = () => (
   <>
@@ -48,7 +50,7 @@ const router = createBrowserRouter([
 
   // ── USER pages (RideStatusBar appears here) ──
   {
-    element: <UserLayout />,   // ✅ wraps all user routes
+   element: <CustomerRoute><UserLayout /></CustomerRoute>,   // ✅ wraps all user routes
     children: [
       { path: "/userdashboard",       element: <UserDashboard /> },
       { path: "/bookingconfirmation", element: <BookingConfirmation /> },
@@ -57,11 +59,13 @@ const router = createBrowserRouter([
       { path: "/userprofile",         element: <UserProfile /> },
       { path: "/wallet",              element: <WalletComponent /> },
       {path:"/ridehistory",           element: <RideHistory/>},
+      {path:"/faq", element:<FAQ/>},
+      {path:"/safety", element:<SafetyTips/>}
     ],
   },
 
   // ── EMPLOYEE pages (NO RideStatusBar) ──
-  { path: "/employeedashboard",   element: <EmployeeDashboard /> },
+  { path: "/employeedashboard", element: <EmployeeRoute><EmployeeDashboard /></EmployeeRoute> },
   { path: "/activerental",        element: <ActiveRental /> },
   { path: "/cyclemanagement",     element: <CycleManagement /> },
   { path: "/stationmanagement",   element: <StationManagement /> },
@@ -70,7 +74,7 @@ const router = createBrowserRouter([
   { path: "/maintenancedashboard", element: <MaintenanceDashboard />} ,
 
   // ── ADMIN pages (NO RideStatusBar) ──
-  { path: "/admindashboard",          element: <AdminDashboard /> },
+  { path: "/admindashboard", element: <AdminRoute><AdminDashboard /></AdminRoute> },
   { path: "/adminstation",            element: <AdminStationManagement /> },
   { path: "/customermanagement",      element: <CustomerManagement /> },
   { path: "/cyclefleetmanagement",    element: <CycleFleetManagement /> },

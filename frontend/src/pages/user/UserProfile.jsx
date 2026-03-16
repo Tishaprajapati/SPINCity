@@ -364,9 +364,7 @@ const getCancelRefundMessage = () => {
                   alt="Profile Avatar"
                   className="profile-avatar-large"
                 />
-                <button className="avatar-edit-btn">
-                  <span>📷</span>
-                </button>
+              
               </div>
               <div className="profile-header-info">
                 <h1>{formData.fullName}</h1>
@@ -635,42 +633,6 @@ const getCancelRefundMessage = () => {
                 <button className="btn-primary" onClick={handleChangePassword}>
                   Update Password
                 </button>
-              </div>
-
-              <div className="security-section">
-                <h3>Two-Factor Authentication</h3>
-                <p className="section-description">
-                  Add an extra layer of security to your account
-                </p>
-                <div className="two-factor-card">
-                  <div className="two-factor-info">
-                    <span className="status-badge inactive">Inactive</span>
-                    <p>Protect your account with 2FA via SMS or Email</p>
-                  </div>
-                  <button className="btn-secondary">Enable 2FA</button>
-                </div>
-              </div>
-
-              <div className="security-section">
-                <h3>Active Sessions</h3>
-                <div className="session-list">
-                  <div className="session-item">
-                    <div className="session-icon">💻</div>
-                    <div className="session-details">
-                      <h4>Windows - Chrome</h4>
-                      <p>Ahmedabad, Gujarat • Active Now</p>
-                    </div>
-                    <span className="session-current">Current Session</span>
-                  </div>
-                  <div className="session-item">
-                    <div className="session-icon">📱</div>
-                    <div className="session-details">
-                      <h4>Android - Mobile App</h4>
-                      <p>Ahmedabad, Gujarat • 2 hours ago</p>
-                    </div>
-                    <button className="btn-logout-session">Logout</button>
-                  </div>
-                </div>
               </div>
             </div>
           )}

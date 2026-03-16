@@ -321,7 +321,7 @@ const HomePage = () => {
           <a className="navbar-brand" href="#home">
             <div className="home-logo-container">
               <span className="home-logo-spin">SPIN</span>
-              <span className="home-logo-city">City</span>
+              <span className="home-logo-city">  City</span>
               <div className="logo-tagline">
                 Sustainable Personal Innovation Network
               </div>

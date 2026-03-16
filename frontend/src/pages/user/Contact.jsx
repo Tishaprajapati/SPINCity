@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import "../../style/user/contact.css";
 import cycle from "../../assets/video/v3.mp4";
 import Navbar from "./Navbar";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import {FaPhone, FaWhatsapp } from 'react-icons/fa';
+
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -20,69 +23,77 @@ function Contact() {
       [name]: value,
     }));
   };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!formData.name || !formData.email || !formData.message) {
-    alert("Please fill in all required fields");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      "http://localhost:8080/api/customers/contact",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("✅ Message sent! We'll get back to you within 24 hours.");
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    } else {
-      alert("❌ " + data.error);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("Please fill in all required fields");
+      return;
     }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Server error. Please try again.");
-  }
-};
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/customers/contact",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("✅ Message sent! We'll get back to you within 24 hours.");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        alert("❌ " + data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Server error. Please try again.");
+    }
+  };
 
   const contactInfo = [
     {
-      icon: "📍",
+      icon: <MapPin size={24} color="#16a34a" strokeWidth={1.8} />,
       title: "Visit Us",
-      details: ["123 Cycle Street, City Center", "Vadodara, Gujarat 390001"],
-      color: "#667eea",
+      details: [
+        "B-801, shaligram banglows, behind motera stadium sabarmati, Ahmedabad",
+      ],
+      color: "#8BA3E8",
     },
     {
-      icon: "📞",
+      icon: <Phone size={24} color="#16a34a" strokeWidth={1.8} />,
       title: "Call Us",
       details: ["+91 98765 43210", "+91 98765 43211"],
-      color: "#764ba2",
-    },
-    {
-      icon: "📧",
-      title: "Email Us",
-      details: ["hello@spincity.com", "support@spincity.com"],
       color: "#6C92F4",
     },
     {
-      icon: "⏰",
+      icon: <Mail size={24} color="#16a34a" strokeWidth={1.8} />,
+      title: "Email Us",
+      details: ["dkp_dkp2000@spincity.com", "support@spincity.com"],
+      color: "#667eea",
+    },
+    {
+      icon: <Clock size={24} color="#16a34a" strokeWidth={1.8} />,
       title: "Working Hours",
-      details: ["Mon - Sat: 7:00 AM - 9:00 PM", "Sunday: 8:00 AM - 8:00 PM"],
-      color: "#8BA3E8",
+      details: ["Mon - Sat: 7:00 AM - 2:00 AM", "Sunday: 8:00 AM - 11:00 PM"],
+      color: "#764ba2",
     },
   ];
 
   const faqs = [
     {
-      question: "How do I rent a bike?",
+      question: "How do I rent a cycle?",
       answer:
-        "Simply sign up, browse our bikes, select your preferred bike and rental period, and complete the booking. You can pick up the bike from any of our locations.",
+        "Simply sign up, browse our cycles, select your preferred bike and rental period, and complete the booking. You can pick up the bike from any of our locations.",
     },
     {
       question: "What documents do I need?",
@@ -101,28 +112,28 @@ const handleSubmit = async (e) => {
     },
   ];
 
-const locations = [
-  {
-    name: "Sabarmati Riverfront",
-    address: "Sabarmati Riverfront, Ahmedabad",
-    phone: "+91 98765 43210",
-  },
-  {
-    name: "IIM Ahmedabad",
-    address: "IIM Road, Vastrapur, Ahmedabad",
-    phone: "+91 98765 43211",
-  },
-  {
-    name: "Railway Station",
-    address: "Ahmedabad Junction Railway Station",
-    phone: "+91 98765 43212",
-  },
-];
+  const locations = [
+    {
+      name: "Sabarmati Riverfront",
+      address: "Sabarmati Riverfront, Ahmedabad",
+      phone: "+91 98765 43210",
+    },
+    {
+      name: "IIM Ahmedabad",
+      address: "IIM Road, Vastrapur, Ahmedabad",
+      phone: "+91 98765 43211",
+    },
+    {
+      name: "Railway Station",
+      address: "Ahmedabad Junction Railway Station",
+      phone: "+91 98765 43212",
+    },
+  ];
 
   return (
     <div className="contact-wrapper">
       <div>
-        <Navbar/>
+        <Navbar />
       </div>
       {/* Hero Section */}
       <section className="contact-hero">
@@ -324,27 +335,29 @@ const locations = [
                 </p>
 
                 <div className="quick-options">
-                 
                   <button className="quick-btn">
-                    <span className="quick-icon">📞</span>
+                    <span className="quick-icon"><FaPhone size={18} color="#16a34a" /></span>
+
                     <div>
                       <div className="quick-title">Call Support</div>
-                      <div className="quick-desc">24/7 Available</div>
+                      <a href="tel:+919876543210" className="quick-desc">
+                        +91 98765 43210
+                      </a>
                     </div>
                   </button>
-                 <a 
-  href="https://wa.me/919429766948"  // ✅ put your number here (91 + your number)
-  target="_blank"
-  rel="noopener noreferrer"
-  className="quick-btn"
-  style={{ textDecoration: "none" }}
->
-  <span className="quick-icon">📱</span>
-  <div>
-    <div className="quick-title">WhatsApp</div>
-    <div className="quick-desc">Quick Response</div>
-  </div>
-</a>
+                  <a
+                    href="https://wa.me/919429766948" // ✅ put your number here (91 + your number)
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="quick-btn"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <span className="quick-icon"><FaWhatsapp size={20} color="#25D366" /></span>
+                    <div>
+                      <div className="quick-title">WhatsApp</div>
+                      <div className="quick-desc">Quick Response</div>
+                    </div>
+                  </a>
                 </div>
               </div>
 
@@ -363,9 +376,9 @@ const locations = [
                     </div>
                   ))}
                   <p className="more-locations">
-  📍 & 11 more stations across Ahmedabad —{" "}
-  <a href="/rentcycle">View all stations →</a>
-</p>
+                    📍 & 11 more stations across Ahmedabad —{" "}
+                    <a href="/rentcycle">View all stations →</a>
+                  </p>
                 </div>
               </div>
 
@@ -373,16 +386,14 @@ const locations = [
               <div className="social-card">
                 <h3 className="section-title">Follow Us</h3>
                 <div className="social-links">
-                  <a href="#facebook" className="social-link facebook">
+                  <a  href="https://www.facebook.com/share/1CDsdiRmbZ/" className="social-link facebook">
                     <span>f</span>
                   </a>
-                  <a href="#twitter" className="social-link twitter">
-                    <span>𝕏</span>
+                  
+                  <a href="https://www.instagram.com/kirtida.prajapati" className="social-link instagram">
+                    <span>i</span>
                   </a>
-                  <a href="#instagram" className="social-link instagram">
-                    <span>📷</span>
-                  </a>
-                  <a href="#linkedin" className="social-link linkedin">
+                  <a href="https://www.linkedin.com/in/tisha-prajapati-a94261289/" className="social-link linkedin">
                     <span>in</span>
                   </a>
                 </div>

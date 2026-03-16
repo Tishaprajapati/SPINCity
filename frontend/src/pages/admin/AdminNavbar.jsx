@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../../style/admin/AdminNavbar.css';
-
+import logout from '../../service/logout';
 const AdminNavbar = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -15,11 +15,7 @@ const AdminNavbar = ({ isCollapsed, setIsCollapsed }) => {
 
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
-  const handleLogout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    navigate('/login');
-  };
+ const handleLogout = () => logout();
 
   const menuItems = [
     { key: 'dashboard',    icon: '📊', label: 'Dashboard',          to: '/admindashboard'   },

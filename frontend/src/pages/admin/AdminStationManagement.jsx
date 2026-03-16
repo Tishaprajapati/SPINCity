@@ -187,13 +187,7 @@ const AdminStationManagement = () => {
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
-              <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
-                <option value="all">All Types</option>
-                <option value="Premium">Premium</option>
-                <option value="Standard">Standard</option>
-                <option value="Outdoor">Outdoor</option>
-                <option value="Smart Station">Smart Station</option>
-              </select>
+              
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <option value="name">Name ↑</option>
                 <option value="capacity">Capacity ↓</option>

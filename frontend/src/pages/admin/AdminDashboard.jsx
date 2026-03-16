@@ -22,6 +22,7 @@ const AdminDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
+  
   useEffect(() => {
     fetchDashboardData();
   }, []);
