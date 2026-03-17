@@ -37,7 +37,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ PUBLIC first — no token needed
+                        // ✅ PUBLIC
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/customers/forgot-password",
@@ -46,41 +46,23 @@ public class SecurityConfig {
                                 "/error"
                         ).permitAll()
 
-                        // ✅ ADMIN only
+                        // ✅ ADMIN — must be BEFORE /api/customers/**
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/customers/notifications/send").hasRole("ADMIN")
 
-                        .requestMatchers("/api/customers/notifications/send")
-                        .hasRole("ADMIN")
                         // ✅ EMPLOYEE
-                        // ✅ To this — add STAFF
-                        .requestMatchers("/api/employee/**")
-                        .hasAnyRole("ADMIN", "EMPLOYEE", "STAFF")
+                        .requestMatchers("/api/employee/**").hasAnyRole("ADMIN", "EMPLOYEE", "STAFF")
 
-                        // ✅ USER/CUSTOMER — membership
-                        .requestMatchers("/api/user/membership/**")
-                        .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
+                        // ✅ CUSTOMER
+                        .requestMatchers("/api/customers/**").hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
+                        .requestMatchers("/api/user/membership/**").hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
+                        .requestMatchers("/api/user/rentals/**").hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
 
-                        // ✅ USER/CUSTOMER — rentals
-                        .requestMatchers("/api/user/rentals/**")
-                        .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
-
-                        // ✅ USER/CUSTOMER — all other user endpoints
-                        .requestMatchers("/api/user/**")
-                        .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
-
-                        .requestMatchers("/api/customers/**")
-                        .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
-                        // ✅ CYCLES — public read
+                        // ✅ OTHER
                         .requestMatchers("/api/cycles/**").permitAll()
+                        .requestMatchers("/api/stations/**").hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
 
-                        // ✅ STATIONS
-                        .requestMatchers("/api/stations/**")
-                        .hasAnyRole("USER", "ADMIN", "EMPLOYEE", "CUSTOMER")
-
-                                .requestMatchers("/api/admin/customers/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/employee/ride-status/**").permitAll()
-                                .requestMatchers("/api/admin/feedback/**").hasRole("ADMIN")
-                                // ✅ Everything else needs auth
                         .anyRequest().authenticated()
                 )
 
