@@ -1,9 +1,11 @@
 import { Navigate } from 'react-router-dom';
 
+const normalizeRole = (role) => (role || '').replace(/^ROLE_/, '');
+
 // ── Admin Protected Route ──
 export const AdminRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  const role  = localStorage.getItem('staffRole');
+  const role  = normalizeRole(localStorage.getItem('staffRole'));
   if (!token || role !== 'ADMIN') {
     return <Navigate to="/login" replace />;
   }
@@ -13,8 +15,8 @@ export const AdminRoute = ({ children }) => {
 // ── Employee Protected Route ──
 export const EmployeeRoute = ({ children }) => {
   const token = localStorage.getItem('token');
-  const role  = localStorage.getItem('staffRole');
-  if (!token || !['EMPLOYEE', 'STAFF', 'ROLE_EMPLOYEE', 'ROLE_MAINTENANCE', 'MAINTENANCE'].includes(role)) {
+  const role  = normalizeRole(localStorage.getItem('staffRole'));
+  if (!token || !['EMPLOYEE', 'STAFF', 'MAINTENANCE'].includes(role)) {
     return <Navigate to="/login" replace />;
   }
   return children;

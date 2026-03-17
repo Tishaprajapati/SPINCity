@@ -308,16 +308,7 @@ if (data && data.user && data.user.customerId) {
                   </div>
 
                   <div className="form-options">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        name="rememberMe"
-                        checked={formData.rememberMe}
-                        onChange={handleChange}
-                      />
-                      <span className="checkbox-custom"></span>
-                      <span className="checkbox-text">Remember me</span>
-                    </label>
+                   
                     <button
                       type="button"
                       className="forgot-link"
@@ -336,12 +327,6 @@ if (data && data.user && data.user.customerId) {
                     <span className="btn-arrow">→</span>
                   </button>
 
-                  <div className="quick-demo">
-                    <p className="demo-text">Want to explore first?</p>
-                    <button type="button" className="btn-demo">
-                      Try Demo Account
-                    </button>
-                  </div>
                 </div>
               </div>
 
