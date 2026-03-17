@@ -29,8 +29,12 @@ const RideHistory = () => {
 
   const getCycleTypeName = (type) => {
     const types = {
-      1: "Gear", 2: "Non-Gear", 3: "Kids",
-      4: "Women", 5: "City", 6: "Electric",
+      1: "Gear",
+      2: "Non-Gear",
+      3: "Kids",
+      4: "Women",
+      5: "City",
+      6: "Electric",
     };
     return types[type] || type || "Cycle";
   };
@@ -39,7 +43,9 @@ const RideHistory = () => {
     if (!dateStr) return "—";
     const d = new Date(dateStr);
     return d.toLocaleDateString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -47,7 +53,9 @@ const RideHistory = () => {
     if (!dateStr) return "—";
     const d = new Date(dateStr);
     return d.toLocaleTimeString("en-IN", {
-      hour: "2-digit", minute: "2-digit", hour12: true,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
@@ -60,19 +68,35 @@ const RideHistory = () => {
 
   const getStatusConfig = (status) => {
     switch (status) {
-      case "Completed": return { color: "status-completed", label: "Completed", dot: "#22c55e" };
-      case "Active":    return { color: "status-active",    label: "Active",    dot: "#3b82f6" };
-      case "Cancelled": return { color: "status-cancelled", label: "Cancelled", dot: "#ef4444" };
-      default:          return { color: "status-default",   label: status,      dot: "#94a3b8" };
+      case "Completed":
+        return {
+          color: "status-completed",
+          label: "Completed",
+          dot: "#22c55e",
+        };
+      case "Active":
+        return { color: "status-active", label: "Active", dot: "#3b82f6" };
+      case "Cancelled":
+        return {
+          color: "status-cancelled",
+          label: "Cancelled",
+          dot: "#ef4444",
+        };
+      default:
+        return { color: "status-default", label: status, dot: "#94a3b8" };
     }
   };
 
   const getPaymentConfig = (status) => {
     switch (status) {
-      case "Success": return { color: "pay-success", label: "Paid" };
-      case "Pending": return { color: "pay-pending", label: "Pending" };
-      case "Failed":  return { color: "pay-failed",  label: "Failed" };
-      default:        return { color: "pay-default", label: status };
+      case "Success":
+        return { color: "pay-success", label: "Paid" };
+      case "Pending":
+        return { color: "pay-pending", label: "Pending" };
+      case "Failed":
+        return { color: "pay-failed", label: "Failed" };
+      default:
+        return { color: "pay-default", label: status };
     }
   };
 
@@ -80,15 +104,18 @@ const RideHistory = () => {
 
   const filteredHistory = history
     .filter((r) => filter === "All" || r.rentalStatus === filter)
-    .filter((r) =>
-      searchTerm === "" ||
-      r.cycleName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.pickupStation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.returnStation?.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(
+      (r) =>
+        searchTerm === "" ||
+        r.cycleName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.pickupStation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.returnStation?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
   // Stats
-  const totalRides = history.filter((r) => r.rentalStatus === "Completed").length;
+  const totalRides = history.filter(
+    (r) => r.rentalStatus === "Completed",
+  ).length;
   const totalSpent = history
     .filter((r) => r.rentalStatus === "Completed")
     .reduce((sum, r) => sum + (r.totalAmount || 0), 0);
@@ -132,7 +159,9 @@ const RideHistory = () => {
           <div className="rh-stat-pill">
             <span className="rh-stat-icon">⏱️</span>
             <div>
-              <span className="rh-stat-num">{formatDuration(totalMinutes)}</span>
+              <span className="rh-stat-num">
+                {formatDuration(totalMinutes)}
+              </span>
               <span className="rh-stat-lbl">Time Ridden</span>
             </div>
           </div>
@@ -141,7 +170,6 @@ const RideHistory = () => {
 
       {/* Main Content */}
       <div className="rh-container">
-
         {/* Search + Filter */}
         <div className="rh-controls">
           <div className="rh-search-wrap">
@@ -217,7 +245,9 @@ const RideHistory = () => {
                     <div className="rh-card-cycle">
                       <div className="rh-cycle-icon">🚲</div>
                       <div>
-                        <h3 className="rh-cycle-name">{ride.cycleName || "—"}</h3>
+                        <h3 className="rh-cycle-name">
+                          {ride.cycleName || "—"}
+                        </h3>
                         <span className="rh-cycle-type">
                           {getCycleTypeName(ride.cycleType)}
                         </span>
@@ -243,7 +273,9 @@ const RideHistory = () => {
                       <span className="rh-route-dot pickup" />
                       <div>
                         <span className="rh-route-label">Pickup</span>
-                        <span className="rh-route-name">{ride.pickupStation || "—"}</span>
+                        <span className="rh-route-name">
+                          {ride.pickupStation || "—"}
+                        </span>
                       </div>
                     </div>
                     <div className="rh-route-line">
@@ -254,7 +286,9 @@ const RideHistory = () => {
                       <span className="rh-route-dot dropoff" />
                       <div>
                         <span className="rh-route-label">Return</span>
-                        <span className="rh-route-name">{ride.returnStation || "—"}</span>
+                        <span className="rh-route-name">
+                          {ride.returnStation || "—"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -316,8 +350,8 @@ const RideHistory = () => {
           </div>
         )}
       </div>
-      
-         {/* ══════════ FOOTER ══════════ */}
+
+      {/* ══════════ FOOTER ══════════ */}
       <footer className="ud-footer">
         <div className="ud-footer-inner">
           {/* Brand */}
@@ -449,15 +483,38 @@ const RideHistory = () => {
         </div>
 
         {/* Bottom bar */}
+        {/* Bottom bar */}
         <div className="ud-footer-bottom">
           <p className="ud-footer-copy">
             © {new Date().getFullYear()} <span>SpinCity</span>. Built with ♥ in
             Ahmedabad.
           </p>
           <div className="ud-footer-legal">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
-            <a href="#">Cookie Policy</a>
+            <div className="legal-item">
+              <a href="#">Privacy Policy</a>
+              <div className="legal-tooltip">
+                <h4>🔒 Privacy Policy</h4>
+                <p>
+                  We collect only essential data like your name, email, and ride
+                  history to provide our services. Your data is never sold to
+                  third parties. All payment information is encrypted and
+                  securely processed.
+                </p>
+              </div>
+            </div>
+
+            <div className="legal-item">
+              <a href="#">Terms of Use</a>
+              <div className="legal-tooltip">
+                <h4>📋 Terms of Use</h4>
+                <p>
+                  By using SpinCity, you agree to ride responsibly, follow
+                  traffic rules, and return cycles on time. Damaged cycles will
+                  incur repair charges. Accounts may be suspended for policy
+                  violations.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

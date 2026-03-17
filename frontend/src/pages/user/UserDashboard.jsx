@@ -1018,7 +1018,7 @@ const UserDashboard = () => {
             </ul>
           </div>
         </div>
-
+        {/* Bottom bar */}
         {/* Bottom bar */}
         <div className="ud-footer-bottom">
           <p className="ud-footer-copy">
@@ -1026,11 +1026,35 @@ const UserDashboard = () => {
             Ahmedabad.
           </p>
           <div className="ud-footer-legal">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Use</a>
-            <a href="#">Cookie Policy</a>
+            <div className="legal-item">
+              <a href="#">Privacy Policy</a>
+              <div className="legal-tooltip">
+                <h4>🔒 Privacy Policy</h4>
+                <p>
+                  We collect only essential data like your name, email, and ride
+                  history to provide our services. Your data is never sold to
+                  third parties. All payment information is encrypted and
+                  securely processed.
+                </p>
+              </div>
+            </div>
+
+            <div className="legal-item">
+              <a href="#">Terms of Use</a>
+              <div className="legal-tooltip">
+                <h4>📋 Terms of Use</h4>
+                <p>
+                  By using SpinCity, you agree to ride responsibly, follow
+                  traffic rules, and return cycles on time. Damaged cycles will
+                  incur repair charges. Accounts may be suspended for policy
+                  violations.
+                </p>
+              </div>
+            </div>
+
+           
           </div>
-        </div>
+        </div>{" "}
       </footer>
 
       {/* ══ MODALS ══ */}

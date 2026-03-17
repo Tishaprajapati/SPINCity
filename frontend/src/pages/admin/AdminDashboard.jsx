@@ -6,6 +6,7 @@ import {
 } from "../../service/adminDashboardService";
 import "../../style/admin/admindashboard.css";
 import AdminNavbar from "./AdminNavbar";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -16,13 +17,13 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -478,17 +479,41 @@ const AdminDashboard = () => {
             <div className="quick-actions">
               <h3>Quick Actions</h3>
               <div className="action-buttons">
-                <button className="action-btn">
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/customermanagement")}
+                >
+                  <span>👥</span>Customers
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/cyclefleetmanagement")}
+                >
                   <span>🚴</span>Fleet Management
                 </button>
-                <button className="action-btn">
-                  <span>🔧</span>Maintenance
-                </button>
-                <button className="action-btn">
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/adminstation")}
+                >
                   <span>📍</span>Stations
                 </button>
-                <button className="action-btn">
-                  <span>👥</span>Employees
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/employeemanagement")}
+                >
+                  <span>👔</span>Employees
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/feedback")}
+                >
+                  <span>⭐</span>Feedback
+                </button>
+                <button
+                  className="action-btn"
+                  onClick={() => navigate("/alert")}
+                >
+                  <span>🚨</span>Notifications
                 </button>
               </div>
             </div>

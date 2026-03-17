@@ -269,41 +269,41 @@ const HomePage = () => {
 
   const bikes = [
     {
-      name: "Urban Commuter",
+      name: "City Cycle",
       price: "₹50/hour",
       image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbgq_69-6Y9yDjKH5s_B_2_MR7HHdDWlG7pQ&s",
+        "https://tse1.mm.bing.net/th/id/OIP.tvgrC25LGsuGohWlbS6FYwHaE8?pid=Api&P=0&h=180",
       features: ["City rides", "Comfortable seat", "Basket included"],
     },
     {
-      name: "Mountain Explorer",
-      price: "₹80/hour",
+      name: "Electric Cycle",
+      price: "₹70/hour",
       image:
-        "https://bike.shimano.com/content/dam/one-website/common/stories/shimano-105-mechanical-magic/FullMediaBanner_Article-Banner_PC_v2.jpg",
+        "https://tse4.mm.bing.net/th/id/OIP.h0d5La0-nkbInt6MTp--ogHaE7?pid=Api&P=0&h=180",
       features: ["Off-road ready", "Suspension", "All-terrain"],
     },
     {
-      name: "Speed Racer",
-      price: "₹100/hour",
+      name: "Woman Cycle",
+      price: "₹45/hour",
       image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEM8wlCHJ-oKMvxMiL0I6CymsG9q-AXAIM6A&s",
+        "https://tse1.mm.bing.net/th/id/OIP.aTC_3muXMeGC9tkeXkdItgHaDm?pid=Api&P=0&h=180",
       features: ["High speed", "Lightweight", "Racing design"],
     },
   ];
 
   const testimonials = [
     {
-      name: "Rajesh Kumar",
+      name: "Ghanshyam Pandey",
       text: "SPINCity transformed my daily commute. Eco-friendly and affordable!",
       rating: 5,
     },
     {
-      name: "Priya Sharma",
-      text: "Best cycling experience in the city. The bikes are well-maintained and booking is seamless.",
+      name: "Dharmendra Prajapati",
+      text: "Excellent idea to solve the problem of traffic.",
       rating: 5,
     },
     {
-      name: "Amit Patel",
+      name: "Anjali Prajapati",
       text: "Incredible service! I use it every weekend for my fitness routine.",
       rating: 5,
     },
@@ -321,7 +321,7 @@ const HomePage = () => {
           <a className="navbar-brand" href="#home">
             <div className="home-logo-container">
               <span className="home-logo-spin">SPIN</span>
-              <span className="home-logo-city">  City</span>
+              <span className="home-logo-city"> City</span>
               <div className="logo-tagline">
                 Sustainable Personal Innovation Network
               </div>
@@ -388,11 +388,10 @@ const HomePage = () => {
                   eco-friendly companion for urban mobility
                 </p>
                 <div className="hero-buttons animate-slide-up delay-2">
-                 
-                    <Link className="btn btn-primary btn-lg me-3" to="/signup">
-                      Explore Bikes
-                    </Link>
-           
+                  <Link className="btn btn-primary btn-lg me-3" to="/signup">
+                    Explore Bikes
+                  </Link>
+
                   {/* <a href="#bikes" className="btn btn-primary btn-lg me-3">
                     Explore Bikes
                   </a> */}
@@ -496,9 +495,11 @@ const HomePage = () => {
                       alt={bike.name}
                       className="bike-image"
                     />
-                  <div className="bike-overlay">
-  <Link to="/signup" className="btn btn-light">Book Now</Link>
-</div>
+                    <div className="bike-overlay">
+                      <Link to="/signup" className="btn btn-light">
+                        Book Now
+                      </Link>
+                    </div>
                   </div>
                   <div className="bike-content">
                     <h4>{bike.name}</h4>
@@ -598,10 +599,9 @@ const HomePage = () => {
               Join thousands of riders who choose SPINCity for sustainable
               transportation
             </p>
-           <Link to="/signup" className="btn btn-light btn-lg">
-  Book Your Bike Now
-</Link>
-
+            <Link to="/signup" className="btn btn-light btn-lg">
+              Book Your Bike Now
+            </Link>
           </div>
         </div>
       </section>
@@ -610,14 +610,15 @@ const HomePage = () => {
       <footer className="footer">
         <div className="container">
           <div className="row">
-            <div className="col-lg-4 mb-4">
+            <div className="col-lg-7 mb-4">
               <div className="footer-logo">
                 <span className="home-logo-spin">SPIN</span>
                 <span className="logo-city">City</span>
               </div>
               <p className="footer-description">
                 Sustainable Personal Innovation Network - Leading the way in
-                eco-friendly urban mobility
+                eco-friendly urban mobility.
+                SpinCity is on a mission to transform urban mobility in Ahmedabad through smart, sustainable cycle rentals. With 14 stations and 100+ premium cycles, we make it easy to skip the traffic and ride green — every single day.
               </p>
             </div>
             <div className="col-lg-2 col-md-6 mb-4">
@@ -641,20 +642,39 @@ const HomePage = () => {
               <h5>Support</h5>
               <ul className="footer-links">
                 <li>
-                  <a href="#faq">FAQ</a>
+                  <Link to="/faq">FAQ</Link>
                 </li>
                 <li>
-                  <a href="#contact">Contact</a>
+                  <a href="tel:+919876543210">Contact</a>
                 </li>
-                <li>
-                  <a href="#terms">Terms</a>
+                <li className="legal-item">
+                  <span className="legal-link">Terms</span>
+                  <div className="legal-tooltip">
+                    <h4>📋 Terms of Use</h4>
+                    <p>
+                      By using SpinCity, you agree to ride responsibly, follow
+                      traffic rules, and return cycles on time. Damaged cycles
+                      will incur repair charges. Accounts may be suspended for
+                      policy violations.
+                    </p>
+                  </div>
                 </li>
-                <li>
-                  <a href="#privacy">Privacy</a>
+
+                <li className="legal-item">
+                  <span className="legal-link">Privacy</span>
+                  <div className="legal-tooltip">
+                    <h4>🔒 Privacy Policy</h4>
+                    <p>
+                      We collect only essential data like your name, email, and
+                      ride history to provide our services. Your data is never
+                      sold to third parties. All payment information is
+                      encrypted and securely processed.
+                    </p>
+                  </div>
                 </li>
               </ul>
             </div>
-            <div className="col-lg-4 mb-4">
+            {/* <div className="col-lg-4 mb-4">
               <h5>Newsletter</h5>
               <p>Subscribe for updates and exclusive offers</p>
               <div className="newsletter-form">
@@ -665,7 +685,7 @@ const HomePage = () => {
                 />
                 <button className="btn btn-primary">Subscribe</button>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="footer-bottom">
             <p>
