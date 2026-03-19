@@ -11,7 +11,8 @@ import java.time.LocalDate;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    @Query(value = "SELECT COALESCE(SUM(amount),0) FROM payment WHERE DATE(payment_date) = CURDATE() AND payment_status = 'Success'", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(amount),0) FROM payment WHERE DATE(payment_date) = CURDATE() AND" +
+            " payment_status = 'Success'", nativeQuery = true)
     double getTodayRevenue();
 
     // Today's revenue at a specific station

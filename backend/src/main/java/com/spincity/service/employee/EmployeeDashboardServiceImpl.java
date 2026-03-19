@@ -16,6 +16,7 @@ import com.spincity.model.station.Station;
 import com.spincity.repository.StationRepository;
 import com.spincity.model.rental.RentalStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,11 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
     @Override
     public EmployeeDashboardDTO getDashboardSummary(Long stationId) {
 
-        double todayRevenue = paymentRepository.getTodayRevenueByStation(stationId);
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayStart = today.atStartOfDay();
+        LocalDateTime todayEnd = today.atTime(23, 59, 59);
+        Double todayRevenue = rentalTransactionRepository.sumTotalAmountByStationBetween(stationId, todayStart, todayEnd);
+        double todayRevenueVal = todayRevenue != null ? todayRevenue : 0.0;
         Long todayCustomers = rentalTransactionRepository.countTodaysCustomersByStation(stationId);
 
         List<RentalTransaction> activeRides =
@@ -56,7 +61,7 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
         return new EmployeeDashboardDTO(
                 stationId,
                 station.getStationName(),                          // stationName — will add below
-                todayRevenue,
+                todayRevenueVal,
                 todayCustomers,
                 (long) activeRides.size(),
                 (long) pendingApprovals.size(),
@@ -256,7 +261,11 @@ public class EmployeeDashboardServiceImpl implements EmployeeDashboardService {
         LocalDateTime monthAgo = now.minusDays(30);
 
         // Revenue
-        double todayRev = paymentRepository.getTodayRevenueByStation(stationId);
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayStart2 = today.atStartOfDay();
+        LocalDateTime todayEnd2 = today.atTime(23, 59, 59);
+        Double todayRevObj = rentalTransactionRepository.sumTotalAmountByStationBetween(stationId, todayStart2, todayEnd2);
+        double todayRev = todayRevObj != null ? todayRevObj : 0.0;
 
         double weeklyRev = rentalTransactionRepository.getWeeklyRevenueByStation(stationId);
         double monthlyRev = rentalTransactionRepository.getMonthlyRevenueByStation(stationId);

@@ -98,6 +98,22 @@ public interface RentalTransactionRepository extends JpaRepository<RentalTransac
             @Param("fromDate") LocalDateTime fromDate
     );
 
+    @Query("SELECT COALESCE(SUM(r.totalAmount), 0) FROM RentalTransaction r " +
+            "WHERE r.createdAt BETWEEN :start AND :end")
+    Double sumTotalAmountBetween(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query("SELECT COALESCE(SUM(r.totalAmount), 0) FROM RentalTransaction r " +
+            "WHERE r.pickupStation.stationId = :stationId " +
+            "AND r.createdAt BETWEEN :start AND :end")
+    Double sumTotalAmountByStationBetween(
+            @Param("stationId") Long stationId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
 
     // Rider count last 7 days
     @Query("SELECT COUNT(r) FROM RentalTransaction r WHERE " +

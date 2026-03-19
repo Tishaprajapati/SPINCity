@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -50,8 +51,11 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         long activeStations = stationRepository.countByStatus(StationStatus.Active);
         System.out.println("DEBUG: Active stations count = " + activeStations);
 
-        // Today's Revenue - NEW!
-        Double todayRevenue = paymentRepository.getTodayRevenue();
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayStart = today.atStartOfDay();
+        LocalDateTime todayEnd = today.atTime(23, 59, 59);
+        Double todayRevenue = rentalTransactionRepository
+                .sumTotalAmountBetween(todayStart, todayEnd);
         dto.setTodayRevenue(todayRevenue != null ? todayRevenue : 0.0);
 
 
