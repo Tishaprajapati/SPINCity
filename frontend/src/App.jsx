@@ -32,6 +32,7 @@ import MaintenanceDashboard from './pages/employee/MaintenanceDashboard';
 import { AdminRoute, EmployeeRoute, CustomerRoute } from "./componants/ProtectedRoute";
 import FAQ from "./pages/user/FAQ";
 import SafetyTips from "./pages/user/SafetyTips";
+import RevenueManagement from './pages/admin/RevenueManagement';
 // ✅ Layout that wraps only USER pages
 const UserLayout = () => (
   <>
@@ -84,6 +85,8 @@ const router = createBrowserRouter([
   { path: "/feedback",              element: <AdminRoute><FeedbackRatings /></AdminRoute> },
   { path: "/alert",                 element: <AdminRoute><AlertManagement /></AdminRoute> },
   { path: "/maintanaceoverview",    element: <AdminRoute><MaintenanceOverview /></AdminRoute> },
+  { path: "/revenue", element: <AdminRoute><RevenueManagement /></AdminRoute> },
+
 
   { path: "*", element: <div>404 Page Not Found</div> },
 ]);

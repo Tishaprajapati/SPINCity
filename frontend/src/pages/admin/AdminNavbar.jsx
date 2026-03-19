@@ -19,6 +19,7 @@ const AdminNavbar = ({ isCollapsed, setIsCollapsed }) => {
 
   const menuItems = [
     { key: 'dashboard',    icon: '📊', label: 'Dashboard',          to: '/admindashboard'   },
+    { key: 'revenue', icon: '💰', label: 'Revenue', to: '/revenue' },
     { key: 'customers',    icon: '👥', label: 'Customers',           to: '/customermanagement'   },
     { key: 'cycles',       icon: '🚴', label: 'Cycle Fleet',         to: '/cyclefleetmanagement' },
     { key: 'stations',     icon: '📍', label: 'Stations',            to: '/adminstation'    },

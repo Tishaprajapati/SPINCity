@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../style/user/navbar.css";
+import logout from "../../service/logout";
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -62,9 +63,13 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link btn-custom" to="/login">
+              <button
+                type="button"
+                className="nav-link btn-custom"
+                onClick={logout}
+              >
                 Logout
-              </Link>
+              </button>
             </li>{" "}
           </ul>
         </div>

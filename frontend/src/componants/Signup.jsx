@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "../style/Signup.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -99,7 +100,7 @@ function Signup() {
 
     if (response.ok) {
       alert("Registration Successful 🎉");
-      window.location.href = "/login";
+      navigate("/login", { replace: true });
     } else {
       const err = await response.text();
       alert("Signup Failed: " + err);

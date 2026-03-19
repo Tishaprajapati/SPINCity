@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../../style/user/userprofile.css";
 import userService from "../../service/userService";
 import Navbar from "./Navbar";
+import logout from "../../service/logout";
+import { getTokenForPath } from "../../auth/authStorage";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("personal");
@@ -205,7 +207,7 @@ const UserProfile = () => {
   }
 
   try {
-    const token = localStorage.getItem("token");
+    const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
       `http://localhost:8080/api/customers/${customerId}/change-password`,
       {
@@ -233,8 +235,7 @@ const UserProfile = () => {
         confirmPassword: "",
       });
       // ✅ Logout user since password changed
-      localStorage.clear();
-      window.location.href = "/login";
+      await logout();
     } else {
       alert("❌ " + (data.error || "Failed to change password"));
     }
@@ -246,7 +247,7 @@ const UserProfile = () => {
 
   const handleSavePreferences = async () => {
   try {
-    const token = localStorage.getItem("token");
+    const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
       `http://localhost:8080/api/customers/${customerId}/notifications`,
       {

@@ -3,6 +3,7 @@
 // =====================================================
 
 import axiosInstance from "../config/axiosConfig";
+import { getTokenForPath } from "../auth/authStorage";
 
 const userService = {
   // ==========================================
@@ -92,7 +93,7 @@ const userService = {
   // },
 
   updatePaymentStatus: async (transactionId, status) => {
-  const token = localStorage.getItem("token");
+  const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
     `http://localhost:8080/api/employee/payment-status/${transactionId}?status=${status}`,
     {
@@ -171,7 +172,7 @@ const userService = {
     return response.data;
   },
 startRental: async (customerId, cycleId, pickupStationId, returnStationId, expectedReturnTime,bookedAmount) => {
-  const token = localStorage.getItem("token");
+  const token = getTokenForPath(window.location.pathname);
   const response = await fetch("http://localhost:8080/api/user/rentals/start", {
     method: "POST",
     headers: {
@@ -195,7 +196,7 @@ startRental: async (customerId, cycleId, pickupStationId, returnStationId, expec
   return response.json();
 },
   getActiveRental: async (customerId) => {
-    const token = localStorage.getItem("token");
+    const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
       `http://localhost:8080/api/user/rentals/active/${customerId}`,
       {
@@ -208,7 +209,7 @@ startRental: async (customerId, cycleId, pickupStationId, returnStationId, expec
 
   // End a rental
  endRental: async (rentalId, returnStationId) => {
-  const token = localStorage.getItem("token");
+  const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
     `http://localhost:8080/api/user/rentals/end/${rentalId}`,
     {
@@ -243,7 +244,7 @@ getCustomerFeedback: async (customerId) => {
 },
 
 checkRideStatus: async (transactionId) => {
-  const token = localStorage.getItem("token");
+  const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
     `http://localhost:8080/api/employee/ride-status/${transactionId}`,
     { headers: { Authorization: `Bearer ${token}` } }
@@ -252,7 +253,7 @@ checkRideStatus: async (transactionId) => {
 },
 
 checkApprovalStatus: async (transactionId) => {
-  const token = localStorage.getItem("token");
+  const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
     `http://localhost:8080/api/employee/approval-status/${transactionId}`,
     {

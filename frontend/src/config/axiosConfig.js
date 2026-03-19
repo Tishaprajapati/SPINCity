@@ -3,6 +3,7 @@
 // =====================================================
 
 import axios from 'axios';
+import { clearCustomerAuth, clearStaffAuth, getTokenForPath, isStaffPath } from '../auth/authStorage';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -14,7 +15,7 @@ const axiosInstance = axios.create({
 // Add token to every request
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = getTokenForPath(window.location.pathname);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       console.log("✅ Token added to request");
@@ -35,8 +36,11 @@ axiosInstance.interceptors.response.use(
   (error) => {
     console.error('❌ Error:', error.response?.status, error.config?.url);
     if (error.response?.status === 401) {
-      localStorage.clear();
-      window.location.href = '/login';
+      // Clear only the auth scope for the current app area (staff vs customer),
+      // so logging in as a customer in another tab doesn't break admin (and vice versa).
+      if (isStaffPath(window.location.pathname)) clearStaffAuth();
+      else clearCustomerAuth();
+      window.location.replace('/login');
     }
     return Promise.reject(error);
   }

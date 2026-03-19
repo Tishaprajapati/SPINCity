@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "../style/login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { setCustomerAuth, setStaffAuth } from "../auth/authStorage";
 
 function Login() {
+  const navigate = useNavigate();
   const [favFood, setFavFood] = useState("");
   const [favSport, setFavSport] = useState("");
 
@@ -72,24 +74,19 @@ function Login() {
 
   console.log("STAFF LOGIN RESPONSE ✅", data);
 
-  // ⭐ STORE TOKEN
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("staffRole", data.role);
-  localStorage.setItem("staffId", data.user.id);
-  localStorage.setItem("staffName", data.user.name);
-  localStorage.setItem("stationId", data.user.assignedStation);
+  setStaffAuth({ token: data.token, role: data.role, user: data.user });
 
  if (data.role === "ADMIN") {
   console.log("admin dashboard now will come");
-  window.location.href = "/admindashboard";
+  navigate("/admindashboard", { replace: true });
 } else if (
   data.user.designation === "Cycle Maintenance" ||
   data.role === "MAINTENANCE"
 ) {
   // ✅ ADD THIS BLOCK
-  window.location.href = "/maintenancedashboard";
+  navigate("/maintenancedashboard", { replace: true });
 } else {
-  window.location.href = "/employeedashboard";
+  navigate("/employeedashboard", { replace: true });
 }
 }
  else {
@@ -98,11 +95,8 @@ function Login() {
         // Ensure valid structure
 if (data && data.user && data.user.customerId) {
 
-  localStorage.setItem("customerId", data.user.customerId);
-  localStorage.setItem("customerName", data.user.customerName);
-  localStorage.setItem("token", data.token);
-
-  window.location.href = "/userdashboard";
+  setCustomerAuth({ token: data.token, user: data.user });
+  navigate("/userdashboard", { replace: true });
 
 } else {
   console.error("Invalid login response structure", data);
