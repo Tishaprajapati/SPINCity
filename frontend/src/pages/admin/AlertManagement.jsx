@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Send, Users, CheckCircle, XCircle, Clock, Search, Trash2 } from 'lucide-react';
 import axiosInstance from '../../config/axiosConfig';
-import '../../style/admin/AlertManagement.css';
+import '../../style/admin/alertmanagement.css';
 import AdminNavbar from './AdminNavbar';
 
 const AlertManagement = () => {

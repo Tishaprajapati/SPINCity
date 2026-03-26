@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../config/axiosConfig';
-import '../../style/admin/FeedBackRatings.css';
+import '../../style/admin/feedbackratings.css';
 import AdminNavbar from './AdminNavbar';
 
 

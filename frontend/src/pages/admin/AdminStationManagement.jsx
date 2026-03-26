@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, AlertTriangle, Plus, Search, X, MapPin, Clock, Bike, BarChart3, CheckCircle, XCircle, Edit, Trash2, Eye } from 'lucide-react';
 import { stationService } from '../../service/adminDashboardService';
-import '../../style/admin/StationManagement.css';
+import '../../style/admin/stationmanagement.css';
 import AdminNavbar from './AdminNavbar';
 
 const AdminStationManagement = () => {

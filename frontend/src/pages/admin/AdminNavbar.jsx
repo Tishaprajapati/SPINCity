@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import '../../style/admin/AdminNavbar.css';
+import '../../style/admin/adminnavbar.css';
 import logout from '../../service/logout';
 const AdminNavbar = ({ isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
