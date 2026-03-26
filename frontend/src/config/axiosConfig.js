@@ -6,7 +6,7 @@ import axios from 'axios';
 import { clearCustomerAuth, clearStaffAuth, getTokenForPath, isStaffPath } from '../auth/authStorage';
 
 const axiosInstance = axios.create({
- baseURL: 'https://spincity.onrender.com/api',
+ baseURL: 'https://spincity.onrender.com/api' ,
   headers: {
     'Content-Type': 'application/json',
   },
