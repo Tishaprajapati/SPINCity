@@ -370,10 +370,12 @@ const getCancelRefundMessage = () => {
               <div className="profile-header-info">
                 <h1>{formData.fullName}</h1>
                 <p className="profile-email">{formData.email}</p>
-                <div className="profile-badges">
-                  <span className="badge verified">✓ Verified</span>
-                  <span className="badge member">Monthly Member</span>
-                </div>
+               <div className="profile-badges">
+  <span className="badge verified">✓ Verified</span>
+  <span className="badge member">
+    {currentMembership?.planName || membership?.planName || formData?.membershipType || 'Basic Member'}
+  </span>
+</div>
               </div>
             </div>
             <div className="profile-stats-compact">
@@ -382,12 +384,7 @@ const getCancelRefundMessage = () => {
                 <span className="stat-label">Total Rides</span>
               </div>
 
-              <div className="stat-compact">
-                <span className="stat-value">
-                  ₹{dashboard?.totalSpent ?? 0}
-                </span>
-                <span className="stat-label">Total Spent</span>
-              </div>
+             
 
               <div className="stat-compact">
                 <span className="stat-value">
