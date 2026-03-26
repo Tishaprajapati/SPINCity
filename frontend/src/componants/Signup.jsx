@@ -45,7 +45,7 @@ function Signup() {
     formDataUpload.append("file", file);
 
     const response = await fetch(
-      "http://localhost:8080/api/auth/customer/upload-id-proof",
+      "http://spincity.onrender.com/api/auth/customer/upload-id-proof",
       {
         method: "POST",
         body: formDataUpload, // ✅ NO Content-Type header
@@ -71,7 +71,7 @@ function Signup() {
   const registerCustomer = async () => {
   try {
     const response = await fetch(
-      "http://localhost:8080/api/auth/customer/signup",
+      "http://spincity.onrender.com/api/auth/customer/signup",
       {
         method: "POST",
         headers: {

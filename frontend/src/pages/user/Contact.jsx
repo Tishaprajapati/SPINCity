@@ -32,7 +32,7 @@ function Contact() {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/customers/contact",
+        "http://spincity.onrender.com/api/customers/contact",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

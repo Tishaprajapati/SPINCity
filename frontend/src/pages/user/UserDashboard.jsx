@@ -27,7 +27,7 @@ const getCategoryImage = (cycleType) => {
     5: "/uploads/cycles/city.png",
     6: "/uploads/cycles/electric.jpg",
   };
-  return `http://localhost:8080${images[String(cycleType)] || "/uploads/cycles/gear.jpg"}`;
+  return `http://spincity.onrender.com${images[String(cycleType)] || "/uploads/cycles/gear.jpg"}`;
 };
 
 const UserDashboard = () => {
@@ -721,7 +721,7 @@ const UserDashboard = () => {
                         <img
                           src={
                             bike.imagePath
-                              ? `http://localhost:8080${bike.imagePath}`
+                              ? `http://spincity.onrender.com${bike.imagePath}`
                               : getCategoryImage(bike.cycleType)
                           }
                           alt={bike.cycleName}

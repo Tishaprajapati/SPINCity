@@ -95,7 +95,7 @@ const userService = {
   updatePaymentStatus: async (transactionId, status) => {
   const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
-    `http://localhost:8080/api/employee/payment-status/${transactionId}?status=${status}`,
+    `http://spincity.onrender.com/api/employee/payment-status/${transactionId}?status=${status}`,
     {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
@@ -173,7 +173,7 @@ const userService = {
   },
 startRental: async (customerId, cycleId, pickupStationId, returnStationId, expectedReturnTime,bookedAmount) => {
   const token = getTokenForPath(window.location.pathname);
-  const response = await fetch("http://localhost:8080/api/user/rentals/start", {
+  const response = await fetch("http://spincity.onrender.com/api/user/rentals/start", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -198,7 +198,7 @@ startRental: async (customerId, cycleId, pickupStationId, returnStationId, expec
   getActiveRental: async (customerId) => {
     const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
-      `http://localhost:8080/api/user/rentals/active/${customerId}`,
+      `http://spincity.onrender.com/api/user/rentals/active/${customerId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },
@@ -211,7 +211,7 @@ startRental: async (customerId, cycleId, pickupStationId, returnStationId, expec
  endRental: async (rentalId, returnStationId) => {
   const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
-    `http://localhost:8080/api/user/rentals/end/${rentalId}`,
+    `http://spincity.onrender.com/api/user/rentals/end/${rentalId}`,
     {
       method: "POST",
       headers: {
@@ -246,7 +246,7 @@ getCustomerFeedback: async (customerId) => {
 checkRideStatus: async (transactionId) => {
   const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
-    `http://localhost:8080/api/employee/ride-status/${transactionId}`,
+    `http://spincity.onrender.com/api/employee/ride-status/${transactionId}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
   return await response.text();
@@ -255,7 +255,7 @@ checkRideStatus: async (transactionId) => {
 checkApprovalStatus: async (transactionId) => {
   const token = getTokenForPath(window.location.pathname);
   const response = await fetch(
-    `http://localhost:8080/api/employee/approval-status/${transactionId}`,
+    `http://spincity.onrender.com/api/employee/approval-status/${transactionId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -209,7 +209,7 @@ const UserProfile = () => {
   try {
     const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
-      `http://localhost:8080/api/customers/${customerId}/change-password`,
+      `http://spincity.onrender.com/api/customers/${customerId}/change-password`,
       {
         method: "PUT",
         headers: {
@@ -249,7 +249,7 @@ const UserProfile = () => {
   try {
     const token = getTokenForPath(window.location.pathname);
     const response = await fetch(
-      `http://localhost:8080/api/customers/${customerId}/notifications`,
+      `http://spincity.onrender.com/api/customers/${customerId}/notifications`,
       {
         method: "PUT",
         headers: {
