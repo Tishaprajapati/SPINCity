@@ -45,8 +45,8 @@ function Login() {
     try {
       const endpoint =
         formData.userType === "staff"
-          ? "http://spincity.onrender.com/api/auth/staff/login"
-          : "http://spincity.onrender.com/api/auth/customer/login";
+          ? "https://spincity.onrender.com/api/auth/staff/login"
+          : "https://spincity.onrender.com/api/auth/customer/login";
 
  const bodyData = {
   email: formData.email.trim().toLowerCase(),
@@ -118,7 +118,7 @@ if (data && data.user && data.user.customerId) {
 
     try {
       const res = await fetch(
-        "http://spincity.onrender.com/api/customers/forgot-password",
+        "https://spincity.onrender.com/api/customers/forgot-password",
         {
           method: "POST",
           headers: {

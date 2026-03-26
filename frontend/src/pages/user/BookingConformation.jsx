@@ -233,7 +233,7 @@ const BookingConfirmation = () => {
         name: passedBike.cycleName,
         type: getCategoryName(passedBike.cycleType),
         image: passedBike.imagePath
-          ? `http://spincity.onrender.com${passedBike.imagePath}`
+          ? `https://spincity.onrender.com${passedBike.imagePath}`
           : "https://images.unsplash.com/photo-1571333250630-f0230c320b6d?w=400",
         hourlyPrice: passedBike.pricePerHour,
         dailyPrice: passedBike.dailyPrice,

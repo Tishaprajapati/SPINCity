@@ -22,7 +22,7 @@ e.preventDefault();
 
 try {
   const response = await fetch(
-    "http://spincity.onrender.com/forgot-password",
+    "https://spincity.onrender.com/forgot-password",
     {
       method: "POST",
       headers: {

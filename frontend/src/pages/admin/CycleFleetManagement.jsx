@@ -65,7 +65,7 @@ const CycleFleetManagement = () => {
     'electric':  '/uploads/cycles/electric.jpg',
     '6':         '/uploads/cycles/electric.jpg',
   };
-  return `http://spincity.onrender.com${images[cycleType] || '/uploads/cycles/nongear.png'}`;
+  return `https://spincity.onrender.com${images[cycleType] || '/uploads/cycles/nongear.png'}`;
 };
 
   const loadData = async () => {

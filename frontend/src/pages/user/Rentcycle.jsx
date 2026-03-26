@@ -15,7 +15,7 @@ const getCategoryImage = (cycleType) => {
     5: "/uploads/cycles/city.png",
     6: "/uploads/cycles/electric.jpg",
   };
-  return `http://spincity.onrender.com${images[String(cycleType)] || "/uploads/cycles/gear.jpg"}`;
+  return `https://spincity.onrender.com${images[String(cycleType)] || "/uploads/cycles/gear.jpg"}`;
 };
 
 const CATEGORIES = [
@@ -705,7 +705,7 @@ function RentCycle() {
                     <img
                       src={
                         bike.imagePath
-                          ? `http://spincity.onrender.com${bike.imagePath}`
+                          ? `https://spincity.onrender.com${bike.imagePath}`
                           : getCategoryImage(bike.cycleType)
                       }
                       alt={bike.cycleName}
@@ -921,7 +921,7 @@ function RentCycle() {
               <img
                 src={
                   selectedBike.imagePath
-                    ? `http://spincity.onrender.com${selectedBike.imagePath}`
+                    ? `https://spincity.onrender.com${selectedBike.imagePath}`
                     : getCategoryImage(selectedBike.cycleType)
                 }
                 alt={selectedBike.cycleName}

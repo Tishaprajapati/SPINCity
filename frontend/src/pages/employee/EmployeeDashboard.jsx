@@ -1013,7 +1013,7 @@ const EmployeeDashboard = () => {
                             href={
                               selectedCustomer.idProofUrl.startsWith("http")
                                 ? selectedCustomer.idProofUrl
-                                : `http://spincity.onrender.com${selectedCustomer.idProofUrl}`
+                                : `https://spincity.onrender.com${selectedCustomer.idProofUrl}`
                             }
                             target="_blank"
                             rel="noopener noreferrer"
