@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;500;700&display=swap');
 /* Booking Confirmation Page */
 .booking-confirmation-page {
   min-height: 100vh;
@@ -808,7 +808,7 @@
    CYCLE RENTAL PAYMENT MODAL - KINETIC THEME
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Exo+2:wght@400;500;700&display=swap');
+
 
 /* ── Overlay ── */
 .payment-modal-overlay {
