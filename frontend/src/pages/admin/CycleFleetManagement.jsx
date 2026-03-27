@@ -38,36 +38,15 @@ const CycleFleetManagement = () => {
 
  const getCycleImage = (cycleType) => {
   const images = {
-    // Gear
-    'Gear':      '/uploads/cycles/gear.png',
-    'gear':      '/uploads/cycles/gear.png',
-    '1':         '/uploads/cycles/gear.png',
-    // Non-Gear
-    'Non-Gear':  '/uploads/cycles/nongear.png',
-    'non-gear':  '/uploads/cycles/nongear.png',
-    'NonGear':   '/uploads/cycles/nongear.png',
-    '2':         '/uploads/cycles/nongear.png',
-    // Kids
-    'Kids':      '/uploads/cycles/kids.png',
-    'kids':      '/uploads/cycles/kids.png',
-    '3':         '/uploads/cycles/kids.png',
-    // Women
-    'Women':     '/uploads/cycles/woman.png',
-    'women':     '/uploads/cycles/woman.png',
-    'Woman':     '/uploads/cycles/woman.png',
-    '4':         '/uploads/cycles/woman.png',
-    // City
-    'City':      '/uploads/cycles/city.png',
-    'city':      '/uploads/cycles/city.png',
-    '5':         '/uploads/cycles/city.png',
-    // Electric
-    'Electric':  '/uploads/cycles/electric.jpg',
-    'electric':  '/uploads/cycles/electric.jpg',
-    '6':         '/uploads/cycles/electric.jpg',
+    1: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/gear.png",
+    2: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/nongear.png",
+    3: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/kids.png",
+    4: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/woman.png",
+    5: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/city.png",
+    6: "https://raw.githubusercontent.com/Tishaprajapati/SPINCity/main/backend/uploads/cycles/electric.jpg",
   };
-  return `https://spincity.onrender.com${images[cycleType] || '/uploads/cycles/nongear.png'}`;
+  return images[String(cycleType)] || images[1];
 };
-
   const loadData = async () => {
     try {
       setLoading(true);
