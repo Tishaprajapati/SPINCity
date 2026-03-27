@@ -9,4 +9,5 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+# ✅ Use $PORT for Render
+ENTRYPOINT ["sh", "-c", "java -jar /app/app.jar --server.port=$PORT"]

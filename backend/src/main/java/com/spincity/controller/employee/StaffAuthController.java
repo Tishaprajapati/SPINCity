@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth/staff")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "https://spin-city.vercel.app"})
 public class StaffAuthController {
 
     private final StaffRepository staffRepository;
