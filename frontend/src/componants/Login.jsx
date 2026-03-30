@@ -14,6 +14,7 @@ function Login() {
     rememberMe: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -31,16 +32,15 @@ function Login() {
     alert("Google Sign-In integration will be implemented with backend!");
   };
 
-
-
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log("handlelogin entered");
-   if (!formData.email || !formData.password) {
-  alert("Please fill required fields");
-  return;
-}
-
+    if (!formData.email || !formData.password) {
+      alert("Please fill required fields");
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const endpoint =
@@ -48,12 +48,10 @@ function Login() {
           ? "https://spincity.onrender.com/api/auth/staff/login"
           : "https://spincity.onrender.com/api/auth/customer/login";
 
- const bodyData = {
-  email: formData.email.trim().toLowerCase(),
-  password: formData.password.trim(),
-};
-
-         
+      const bodyData = {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password.trim(),
+      };
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -69,43 +67,40 @@ function Login() {
       const data = await res.json(); // staff object aavse
       console.log("FULL STAFF RESPONSE:", JSON.stringify(data, null, 2));
 
-
       if (formData.userType === "staff") {
+        console.log("STAFF LOGIN RESPONSE ✅", data);
 
-  console.log("STAFF LOGIN RESPONSE ✅", data);
+        setStaffAuth({ token: data.token, role: data.role, user: data.user });
 
-  setStaffAuth({ token: data.token, role: data.role, user: data.user });
-
- if (data.role === "ADMIN") {
-  console.log("admin dashboard now will come");
-  navigate("/admindashboard", { replace: true });
-} else if (
-  data.user.designation === "Cycle Maintenance" ||
-  data.role === "MAINTENANCE"
-) {
-  // ✅ ADD THIS BLOCK
-  navigate("/maintenancedashboard", { replace: true });
-} else {
-  navigate("/employeedashboard", { replace: true });
-}
-}
- else {
+        if (data.role === "ADMIN") {
+          console.log("admin dashboard now will come");
+          navigate("/admindashboard", { replace: true });
+        } else if (
+          data.user.designation === "Cycle Maintenance" ||
+          data.role === "MAINTENANCE"
+        ) {
+          // ✅ ADD THIS BLOCK
+          navigate("/maintenancedashboard", { replace: true });
+        } else {
+          navigate("/employeedashboard", { replace: true });
+        }
+      } else {
         console.log("LOGIN FULL RESPONSE ✅", data);
 
         // Ensure valid structure
-if (data && data.user && data.user.customerId) {
-
-  setCustomerAuth({ token: data.token, user: data.user });
-  navigate("/userdashboard", { replace: true });
-
-} else {
-  console.error("Invalid login response structure", data);
-  alert("Login failed — invalid server response");
-}
+        if (data && data.user && data.user.customerId) {
+          setCustomerAuth({ token: data.token, user: data.user });
+          navigate("/userdashboard", { replace: true });
+        } else {
+          console.error("Invalid login response structure", data);
+          alert("Login failed — invalid server response");
+        }
       }
     } catch (error) {
       console.error(error);
       alert("Server Error");
+    } finally {
+      setIsLoading(false); // ← and this
     }
   };
   const handlePasswordReset = async (e) => {
@@ -219,8 +214,6 @@ if (data && data.user && data.user.customerId) {
               </div>
 
               <div className="login-form-container">
-               
-
                 <div className="divider">
                   <span>or sign in with email</span>
                 </div>
@@ -302,7 +295,6 @@ if (data && data.user && data.user.customerId) {
                   </div>
 
                   <div className="form-options">
-                   
                     <button
                       type="button"
                       className="forgot-link"
@@ -316,11 +308,11 @@ if (data && data.user && data.user.customerId) {
                     type="button"
                     className="btn-primary"
                     onClick={handleLogin}
+                    disabled={isLoading}
                   >
-                    LogIn
-                    <span className="btn-arrow">→</span>
+                    {isLoading ? "⏳ Connecting to server..." : "LogIn"}
+                    {!isLoading && <span className="btn-arrow">→</span>}
                   </button>
-
                 </div>
               </div>
 
