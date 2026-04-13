@@ -139,7 +139,7 @@ body {
 }
 
 .text-highlight {
-  background: linear-gradient(135deg, #daff33 0%, #fb3373 100%);
+  background: linear-gradient(135deg, #4b33ff 0%, #fb3373 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

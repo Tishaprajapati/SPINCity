@@ -1,7 +1,3 @@
-// =====================================================
-// FILE: src/config/axiosConfig.js
-// =====================================================
-
 import axios from 'axios';
 import { clearCustomerAuth, clearStaffAuth, getTokenForPath, isStaffPath } from '../auth/authStorage';
 

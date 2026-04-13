@@ -36,7 +36,7 @@ import {
   returnDeposit,
   fetchCustomerDetails,
   updatePaymentStatus,
-  completeRide,  
+  completeRide,
   forfeitDeposit,
 } from "../../service/employeeService";
 
@@ -87,8 +87,6 @@ const EmployeeDashboard = () => {
     return () => clearInterval(t);
   }, [stationId]);
 
-
-  
   const handleCompleteRide = async (transactionId) => {
     try {
       await completeRide(transactionId, empId);
@@ -257,7 +255,9 @@ const EmployeeDashboard = () => {
                 <span>EMP-{empId}</span>
                 <span className="emp-dot" />
                 <MapPin size={13} />
-                <span>{dashboardData?.stationName || `Station #${stationId}`}</span>
+                <span>
+                  {dashboardData?.stationName || `Station #${stationId}`}
+                </span>
               </div>
             </div>
           </div>
@@ -962,7 +962,7 @@ const EmployeeDashboard = () => {
                       <div className="emp-modal-row">
                         <DollarSign size={14} />
                         <span>
-                          Wallet: ₹{selectedCustomer.walletBalance ?? 0}
+                          {/* Wallet: ₹{selectedCustomer.walletBalance ?? 0} */}
                         </span>
                       </div>
                     </div>
@@ -1009,6 +1009,20 @@ const EmployeeDashboard = () => {
                               </p>
                             </div>
                           </div>
+                          {!selectedCustomer.idProofUrl.endsWith(".pdf") && (
+                            <img
+                              src={selectedCustomer.idProofUrl}
+                              alt="ID Proof"
+                              style={{
+                                marginTop: "0.75rem",
+                                width: "100%",
+                                maxHeight: "220px",
+                                objectFit: "contain",
+                                borderRadius: "8px",
+                                border: "1px solid #e2e8f0",
+                              }}
+                            />
+                          )}
                           <a
                             href={
                               selectedCustomer.idProofUrl.startsWith("http")

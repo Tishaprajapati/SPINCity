@@ -41,14 +41,20 @@ function Signup() {
   const uploadIdProof = async (file) => {
   try {
     setUploadingFile(true);
+
+    const cloudName = "dsr6v097r";       
+    const uploadPreset = "dsr6v097r"; 
+
     const formDataUpload = new FormData();
     formDataUpload.append("file", file);
+    formDataUpload.append("upload_preset", uploadPreset);
+    formDataUpload.append("folder", "spincity/id-proofs"); // optional folder
 
     const response = await fetch(
-      "https://spincity.onrender.com/api/auth/customer/upload-id-proof",
+      `https://api.cloudinary.com/v1_1/${dsr6v097r}/auto/upload`,
       {
         method: "POST",
-        body: formDataUpload, // ✅ NO Content-Type header
+        body: formDataUpload,
       }
     );
 
@@ -56,9 +62,12 @@ function Signup() {
       const data = await response.json();
       setFormData((prev) => ({
         ...prev,
-        idProofDocument: data.filePath, // ✅ save path
+        idProofDocument: data.secure_url, // ✅ permanent HTTPS URL
       }));
+      console.log("Uploaded to Cloudinary:", data.secure_url);
     } else {
+      const err = await response.json();
+      console.error("Cloudinary error:", err);
       alert("❌ File upload failed. Please try again.");
     }
   } catch (err) {
@@ -68,6 +77,9 @@ function Signup() {
     setUploadingFile(false);
   }
 };
+
+
+
   const registerCustomer = async () => {
   try {
     const response = await fetch(
